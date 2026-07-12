@@ -104,7 +104,7 @@ def overlay_realizations(
     sigma = results[0].get("sigma", cfg.sigma) if results else cfg.sigma
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.set_title(
-        f"Absorption vs #realizations (Nv={Nv}, σ={sigma:g} eV, κ/ω = 2.2)"
+        f"Absorption vs #realizations (Nv={Nv}, σ={sigma:g} eV, κ/ω = 2.2, 100real)"
     )
 
     for res in sorted(results, key=lambda r: r["n_realizations"]):
