@@ -89,7 +89,6 @@ def overlay_sigma(
     return _finish(fig, ax, cfg, out_path, show)
 
 
-# edit
 
 def overlay_realizations(
     results: List[Dict],
