@@ -7,6 +7,8 @@ realization. This is numerically identical to rebuilding the full matrix every
 realization, but far cheaper.
 """
 
+#import time
+
 from typing import Dict, List
 
 import numpy as np
