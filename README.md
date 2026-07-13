@@ -100,7 +100,7 @@ Summer-Internship-2026/
 The project targets the bundled virtual environment `venv/` (Python 3.14).
 
 ```bash
-cd Summer-Internship-2026
+cd JT-Absorption-Spectra/
 venv/bin/pip install -r requirements.txt
 ```
 
