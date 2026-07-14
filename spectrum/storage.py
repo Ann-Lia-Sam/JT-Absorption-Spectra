@@ -35,6 +35,13 @@ def save_result(result: Dict, cfg: Config) -> None:
         dim=int(result["dim"]),
         E=result["E"],
         spectrum=result["spectrum"],
+        reference_max=(
+            float(result["reference_max"]) if result.get("reference_max") is not None else np.nan
+        ),
+        reference_area=(
+            float(result["reference_area"]) if result.get("reference_area") is not None else np.nan
+        ),
+        normalization=result.get("normalization", "reference"),
         all_evals=result["all_evals"],
         all_intensity=result["all_intensity"],
         # provenance
@@ -53,7 +60,10 @@ def save_result(result: Dict, cfg: Config) -> None:
     np.savetxt(
         dat_path(Nv, cfg),
         np.column_stack([result["E"], result["spectrum"]]),
-        header=f"Nv={Nv}  dim={result['dim']}  n_real={cfg.n_realizations}\nE(eV)    intensity",
+        header=(
+            f"Nv={Nv}  dim={result['dim']}  n_real={cfg.n_realizations}  "
+            f"normalization={result.get('normalization', 'reference')}\nE(eV)    intensity"
+        ),
     )
 
 
@@ -69,6 +79,17 @@ def load_result(Nv: int, cfg: Config) -> Optional[Dict]:
         "dim": int(data["dim"]),
         "E": data["E"],
         "spectrum": data["spectrum"],
+        "reference_max": (
+            float(data["reference_max"])
+            if "reference_max" in data.files and not np.isnan(data["reference_max"])
+            else None
+        ),
+        "reference_area": (
+            float(data["reference_area"])
+            if "reference_area" in data.files and not np.isnan(data["reference_area"])
+            else None
+        ),
+        "normalization": str(data["normalization"]) if "normalization" in data.files else "reference",
         "all_evals": data["all_evals"],
         "all_intensity": data["all_intensity"],
     }
@@ -107,6 +128,13 @@ def save_sigma_result(result: Dict, cfg: Config) -> None:
         dim=int(result["dim"]),
         E=result["E"],
         spectrum=result["spectrum"],
+        reference_max=(
+            float(result["reference_max"]) if result.get("reference_max") is not None else np.nan
+        ),
+        reference_area=(
+            float(result["reference_area"]) if result.get("reference_area") is not None else np.nan
+        ),
+        normalization=result.get("normalization", "reference"),
         all_evals=result["all_evals"],
         all_intensity=result["all_intensity"],
         # provenance
@@ -126,7 +154,8 @@ def save_sigma_result(result: Dict, cfg: Config) -> None:
         np.column_stack([result["E"], result["spectrum"]]),
         header=(
             f"Nv={Nv}  sigma={sigma:g}  dim={result['dim']}  "
-            f"n_real={cfg.n_realizations}\nE(eV)    intensity"
+            f"n_real={cfg.n_realizations}  "
+            f"normalization={result.get('normalization', 'reference')}\nE(eV)    intensity"
         ),
     )
 
@@ -143,6 +172,17 @@ def load_sigma_result(Nv: int, sigma: float, cfg: Config) -> Optional[Dict]:
         "dim": int(data["dim"]),
         "E": data["E"],
         "spectrum": data["spectrum"],
+        "reference_max": (
+            float(data["reference_max"])
+            if "reference_max" in data.files and not np.isnan(data["reference_max"])
+            else None
+        ),
+        "reference_area": (
+            float(data["reference_area"])
+            if "reference_area" in data.files and not np.isnan(data["reference_area"])
+            else None
+        ),
+        "normalization": str(data["normalization"]) if "normalization" in data.files else "reference",
         "all_evals": data["all_evals"],
         "all_intensity": data["all_intensity"],
     }
@@ -182,6 +222,13 @@ def save_realization_result(result: Dict, cfg: Config) -> None:
         dim=int(result["dim"]),
         E=result["E"],
         spectrum=result["spectrum"],
+        reference_max=(
+            float(result["reference_max"]) if result.get("reference_max") is not None else np.nan
+        ),
+        reference_area=(
+            float(result["reference_area"]) if result.get("reference_area") is not None else np.nan
+        ),
+        normalization=result.get("normalization", "reference"),
         all_evals=result["all_evals"],
         all_intensity=result["all_intensity"],
         # provenance
@@ -199,7 +246,8 @@ def save_realization_result(result: Dict, cfg: Config) -> None:
         realization_dat_path(Nv, sigma, n, cfg),
         np.column_stack([result["E"], result["spectrum"]]),
         header=(
-            f"Nv={Nv}  sigma={sigma:g}  n_realizations={n}  dim={result['dim']}"
+            f"Nv={Nv}  sigma={sigma:g}  n_realizations={n}  dim={result['dim']}  "
+            f"normalization={result.get('normalization', 'reference')}"
             f"\nE(eV)    intensity"
         ),
     )
@@ -218,6 +266,17 @@ def load_realization_result(Nv: int, sigma: float, n: int, cfg: Config) -> Optio
         "dim": int(data["dim"]),
         "E": data["E"],
         "spectrum": data["spectrum"],
+        "reference_max": (
+            float(data["reference_max"])
+            if "reference_max" in data.files and not np.isnan(data["reference_max"])
+            else None
+        ),
+        "reference_area": (
+            float(data["reference_area"])
+            if "reference_area" in data.files and not np.isnan(data["reference_area"])
+            else None
+        ),
+        "normalization": str(data["normalization"]) if "normalization" in data.files else "reference",
         "all_evals": data["all_evals"],
         "all_intensity": data["all_intensity"],
     }

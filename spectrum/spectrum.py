@@ -27,6 +27,61 @@ def lorentzian(x, x0, gamma):
     return (1 / np.pi) * (0.5 * gamma) / ((x - x0) ** 2 + (0.5 * gamma) ** 2)
 
 
+VALID_NORMALIZATIONS = ("reference", "reference_area", "area", "none")
+
+
+def _check_normalization(cfg: Config) -> None:
+    if cfg.NORMALIZATION not in VALID_NORMALIZATIONS:
+        raise ValueError(
+            f"cfg.NORMALIZATION={cfg.NORMALIZATION!r} must be one of "
+            f"{VALID_NORMALIZATIONS}"
+        )
+
+
+def _normalize_spectrum(
+    E: np.ndarray,
+    spectrum: np.ndarray,
+    cfg: Config,
+    reference_max: float = None,
+    reference_area: float = None,
+) -> np.ndarray:
+    """Apply the single configured normalization to a fully averaged spectrum.
+
+    Called exactly once, after Lorentzian broadening and disorder averaging
+    are already complete -- never on an individual realization or on an
+    individual disorder spectrum's own peak.
+
+    * ``"reference"`` -- divide by ``reference_max`` (the peak of this Nv's
+      σ=0 spectrum), the same value shared by every sigma/realization-count.
+    * ``"reference_area"`` -- divide by ``reference_area`` (the trapezoidal
+      area of this Nv's σ=0 spectrum), the same value shared by every
+      sigma/realization-count -- same reference spectrum as ``"reference"``,
+      a different summary statistic taken from it.
+    * ``"area"`` -- divide this spectrum by its own trapezoidal integral over
+      ``E``, so ``∫I(E)dE = 1``.
+    * ``"none"`` -- return the spectrum unchanged.
+    """
+    mode = cfg.NORMALIZATION
+    if mode == "reference":
+        if reference_max is not None and reference_max > 0:
+            return spectrum / reference_max
+        return spectrum
+    if mode == "reference_area":
+        if reference_area is not None and reference_area > 0:
+            return spectrum / reference_area
+        return spectrum
+    if mode == "area":
+        area = np.trapezoid(spectrum, E)
+        if area != 0:
+            return spectrum / area
+        return spectrum
+    if mode == "none":
+        return spectrum
+    raise ValueError(
+        f"cfg.NORMALIZATION={mode!r} must be one of {VALID_NORMALIZATIONS}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # Shared building blocks
 # ---------------------------------------------------------------------------
@@ -93,9 +148,6 @@ def _disorder_average(
         H[d, d] -= elec
 
         intensity = np.abs(evecs[i0, :]) ** 2
-        imax = intensity.max()
-        if imax > 0:
-            intensity = intensity / imax
 
         all_evals[r] = evals
         all_intensity[r] = intensity
@@ -104,15 +156,21 @@ def _disorder_average(
 
 
 def _broaden(all_evals: np.ndarray, all_intensity: np.ndarray, cfg: Config):
-    """Lorentzian-broaden and disorder-average onto the energy grid."""
+    """Lorentzian-broaden each realization and average over realizations.
+
+    Returns ``(E, spectrum)`` with ``spectrum`` the raw, disorder-averaged
+    intensity (summed over realizations, divided by the realization count).
+    No normalization is applied here -- that happens once, at the call site,
+    using the zero-disorder (σ=0) spectrum's peak as the common reference.
+    """
     E = np.linspace(cfg.E_min, cfg.E_max, cfg.E_points)
     spectrum = np.zeros_like(E)
     for evals, intensity in zip(all_evals, all_intensity):
         for En, I in zip(evals, intensity):
             spectrum += I * lorentzian(E, En, cfg.gamma)
-    smax = spectrum.max()
-    if smax > 0:
-        spectrum = spectrum / smax
+    n_real = len(all_evals)
+    if n_real > 0:
+        spectrum = spectrum / n_real
     return E, spectrum
 
 
@@ -167,9 +225,6 @@ def _worker_task(task):
     H[d, d] -= elec
 
     intensity = np.abs(evecs[_WORKER["i0"], :]) ** 2
-    imax = intensity.max()
-    if imax > 0:
-        intensity = intensity / imax
     return r, evals, intensity
 
 
@@ -236,17 +291,41 @@ def _disorder_average_parallel(
 # Public entry points
 # ---------------------------------------------------------------------------
 def compute_spectrum_for_Nv(Nv: int, cfg: Config, show_progress: bool = True) -> Dict:
-    """Disorder-averaged absorption spectrum for one ``Nv`` at ``cfg.sigma``."""
+    """Disorder-averaged absorption spectrum for one ``Nv`` at ``cfg.sigma``.
+
+    Normalized per ``cfg.NORMALIZATION`` (see :func:`_normalize_spectrum`).
+    """
+    _check_normalization(cfg)
+    need_ref = cfg.NORMALIZATION in ("reference", "reference_area")
+
     if _parallel_enabled(cfg):
         all_evals, all_intensity, dim = _disorder_average_parallel(
             Nv, cfg.sigma, cfg, show_progress, f"  disorder(Nv={Nv})"
         )
+        if need_ref:
+            ref_evals, ref_intensity, _ = _disorder_average_parallel(
+                Nv, 0.0, cfg, show_progress, f"  reference(Nv={Nv})",
+                n_realizations=cfg.n_realizations,
+            )
     else:
         H, mask1, mask2, i0, dim = _prepare_Nv(Nv, cfg, show_progress)
         all_evals, all_intensity = _disorder_average(
             H, mask1, mask2, i0, cfg.sigma, cfg, show_progress, f"  disorder(Nv={Nv})"
         )
+        if need_ref:
+            ref_evals, ref_intensity = _disorder_average(
+                H, mask1, mask2, i0, 0.0, cfg, show_progress,
+                f"  reference(Nv={Nv})", n_realizations=cfg.n_realizations,
+            )
+
     E, spectrum = _broaden(all_evals, all_intensity, cfg)
+    reference_max = None
+    reference_area = None
+    if need_ref:
+        _, ref_spectrum = _broaden(ref_evals, ref_intensity, cfg)
+        reference_max = ref_spectrum.max()
+        reference_area = np.trapezoid(ref_spectrum, E)
+    spectrum = _normalize_spectrum(E, spectrum, cfg, reference_max, reference_area)
 
     return {
         "Nv": Nv,
@@ -254,6 +333,9 @@ def compute_spectrum_for_Nv(Nv: int, cfg: Config, show_progress: bool = True) ->
         "dim": dim,
         "E": E,
         "spectrum": spectrum,
+        "reference_max": reference_max,
+        "reference_area": reference_area,
+        "normalization": cfg.NORMALIZATION,
         "all_evals": all_evals,
         "all_intensity": all_intensity,
     }
@@ -268,13 +350,38 @@ def compute_spectrum_sigma_sweep(
     """Compute one spectrum per disorder strength ``sigma`` for a fixed ``Nv``.
 
     The static Hamiltonian is built once and reused for every ``sigma``; only
-    the disorder loop reruns. Returns a list of result dicts (one per sigma),
-    each shaped like :func:`compute_spectrum_for_Nv`'s output plus a ``sigma``
-    key.
+    the disorder loop reruns. If ``cfg.NORMALIZATION`` is ``"reference"`` or
+    ``"reference_area"``, the zero-disorder (σ=0) spectrum for this ``Nv`` is
+    also computed once (with the same ``cfg.n_realizations`` as every other
+    spectrum), and its raw peak (``reference_max``) / area (``reference_area``)
+    is used to normalize every sigma's spectrum -- so the peak reduction
+    caused by disorder stays visible instead of being normalized away per
+    curve. Returns a list of result dicts (one per sigma), each shaped like
+    :func:`compute_spectrum_for_Nv`'s output plus a ``sigma`` key.
     """
+    _check_normalization(cfg)
+    need_ref = cfg.NORMALIZATION in ("reference", "reference_area")
+
     parallel = _parallel_enabled(cfg)
     if not parallel:
         H, mask1, mask2, i0, dim = _prepare_Nv(Nv, cfg, show_progress)
+
+    reference_max = None
+    reference_area = None
+    if need_ref:
+        if parallel:
+            ref_evals, ref_intensity, _ = _disorder_average_parallel(
+                Nv, 0.0, cfg, show_progress, f"  reference(Nv={Nv})",
+                n_realizations=cfg.n_realizations,
+            )
+        else:
+            ref_evals, ref_intensity = _disorder_average(
+                H, mask1, mask2, i0, 0.0, cfg, show_progress,
+                f"  reference(Nv={Nv})", n_realizations=cfg.n_realizations,
+            )
+        E_ref, ref_spectrum = _broaden(ref_evals, ref_intensity, cfg)
+        reference_max = ref_spectrum.max()
+        reference_area = np.trapezoid(ref_spectrum, E_ref)
 
     sigmas = list(sigma_list)
     outer = sigmas
@@ -292,6 +399,7 @@ def compute_spectrum_sigma_sweep(
                 H, mask1, mask2, i0, sigma, cfg, show_progress, f"  disorder(sigma={sigma:g})"
             )
         E, spectrum = _broaden(all_evals, all_intensity, cfg)
+        spectrum = _normalize_spectrum(E, spectrum, cfg, reference_max, reference_area)
         results.append(
             {
                 "Nv": Nv,
@@ -299,6 +407,9 @@ def compute_spectrum_sigma_sweep(
                 "dim": dim,
                 "E": E,
                 "spectrum": spectrum,
+                "reference_max": reference_max,
+                "reference_area": reference_area,
+                "normalization": cfg.NORMALIZATION,
                 "all_evals": all_evals,
                 "all_intensity": all_intensity,
             }
@@ -321,24 +432,46 @@ def compute_spectrum_realization_sweep(
     the RNG is seeded once). Returns a list of result dicts, one per realization
     count, each with an ``n_realizations`` key.
     """
+    _check_normalization(cfg)
+    need_ref = cfg.NORMALIZATION in ("reference", "reference_area")
+
     counts = sorted(set(int(n) for n in realization_list))
     n_max = counts[-1]
 
+    # The reference spectrum uses the same realization count as the main
+    # disorder pass for this sweep (n_max), matching "the other spectra".
     if _parallel_enabled(cfg):
         all_evals, all_intensity, dim = _disorder_average_parallel(
             Nv, cfg.sigma, cfg, show_progress,
             f"  disorder(Nv={Nv}, n={n_max})", n_realizations=n_max,
         )
+        if need_ref:
+            ref_evals, ref_intensity, _ = _disorder_average_parallel(
+                Nv, 0.0, cfg, show_progress, f"  reference(Nv={Nv})", n_realizations=n_max
+            )
     else:
         H, mask1, mask2, i0, dim = _prepare_Nv(Nv, cfg, show_progress)
         all_evals, all_intensity = _disorder_average(
             H, mask1, mask2, i0, cfg.sigma, cfg, show_progress,
             f"  disorder(Nv={Nv}, n={n_max})", n_realizations=n_max,
         )
+        if need_ref:
+            ref_evals, ref_intensity = _disorder_average(
+                H, mask1, mask2, i0, 0.0, cfg, show_progress,
+                f"  reference(Nv={Nv})", n_realizations=n_max,
+            )
+
+    reference_max = None
+    reference_area = None
+    if need_ref:
+        E_ref, ref_spectrum = _broaden(ref_evals, ref_intensity, cfg)
+        reference_max = ref_spectrum.max()
+        reference_area = np.trapezoid(ref_spectrum, E_ref)
 
     results: List[Dict] = []
     for n in counts:
         E, spectrum = _broaden(all_evals[:n], all_intensity[:n], cfg)
+        spectrum = _normalize_spectrum(E, spectrum, cfg, reference_max, reference_area)
         results.append(
             {
                 "Nv": Nv,
@@ -347,6 +480,9 @@ def compute_spectrum_realization_sweep(
                 "dim": dim,
                 "E": E,
                 "spectrum": spectrum,
+                "reference_max": reference_max,
+                "reference_area": reference_area,
+                "normalization": cfg.NORMALIZATION,
                 "all_evals": all_evals[:n],
                 "all_intensity": all_intensity[:n],
             }

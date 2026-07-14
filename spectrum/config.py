@@ -25,6 +25,19 @@ class Config:
     delta1: float = 0
     delta2: float = 0
 
+    # ---------------- Normalization ----------------
+    # Applied exactly once, after Lorentzian broadening and disorder averaging.
+    # "reference"      -- divide by the raw peak of this Nv's σ=0 (no-disorder)
+    #   spectrum, shared across every sigma/realization-count for that Nv.
+    # "reference_area" -- divide by the raw trapezoidal area of this Nv's σ=0
+    #   (no-disorder) spectrum, shared across every sigma/realization-count
+    #   for that Nv (same reference spectrum as "reference", different
+    #   summary statistic taken from it).
+    # "area"           -- divide the final averaged spectrum by its own
+    #   integral (trapezoidal over E), so that ∫I(E)dE = 1.
+    # "none"           -- leave the averaged spectrum unchanged.
+    NORMALIZATION: str = "reference_area"
+
     # ---------------- Disorder ----------------
     sigma: float = 0.24            # disorder strength W (eV)
     n_realizations: int = 1
@@ -58,7 +71,7 @@ class Config:
     # ---------------- Realization sweep (fixed Nv, fixed sigma) ----------------
     realization_sweep_nv: int = 12  # Nv used for the realization-count sweep
     realization_list: List[int] = field(
-        default_factory=lambda: [ 1 ]
+        default_factory=lambda: [ 100 ]
     )
 
     # ---------------- Paths ----------------

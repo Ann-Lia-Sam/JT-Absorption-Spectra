@@ -176,6 +176,15 @@ venv/bin/python main.py --sigma-sweep --nv 8 --sigmas 0.01 0.03 0.05 0.08 --no-s
   (default `[0.01, 0.03, 0.05, 0.08]`).
 - Each `(Nv, sigma)` is saved to its own file and resumed/skipped on rerun, exactly
   like the `Nv` sweep. Use `--force` to recompute.
+- **Normalization.** Unlike the other overlays (each curve scaled to its own peak of
+  1), the sigma overlay scales **every** curve by a single shared factor — the raw
+  broadened peak of the smallest-σ curve (ideally `σ=0`, i.e. no disorder). The `σ=0`
+  curve therefore peaks at 1 and each disordered curve peaks **below** it, making the
+  disorder-driven peak reduction visible; this also lines up with the external
+  reference curve (which already peaks at 1). This relies on the `spectrum_max` field
+  now stored in each `.npz` (see below), so **existing sigma results predating this
+  field must be recomputed** — rerun with `--force` (or clear `results/`). Old files
+  without it fall back to the previous per-curve normalization, with a warning.
 
 Programmatic use:
 
@@ -277,7 +286,9 @@ For each `Nv`, two files are written **immediately** after it is computed:
 - **`results/spectrum_Nv{Nv}.npz`** — the complete result, loadable with
   `numpy.load`. Keys:
   - `E` — energy grid, shape `(E_points,)`
-  - `spectrum` — normalized broadened spectrum, shape `(E_points,)`
+  - `spectrum` — broadened spectrum, self-normalized to a peak of 1, shape `(E_points,)`
+  - `spectrum_max` — the raw (pre-normalization) peak that was divided out; lets the
+    sigma overlay re-normalize every curve to a common σ=0 reference (scalar)
   - `all_evals` — eigenvalues, shape `(n_realizations, dim)`
   - `all_intensity` — per-eigenstate intensities, shape `(n_realizations, dim)`
   - `Nv`, `dim`, and provenance scalars (`n_realizations`, `sigma`, `gamma`,

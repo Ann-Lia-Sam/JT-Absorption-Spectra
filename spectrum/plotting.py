@@ -20,8 +20,15 @@ def _plot_reference(ax, cfg: Config) -> None:
         return
     data = np.loadtxt(ref, comments="#")
     E_ref, I_ref = data[:, 0], data[:, 1]
-    if I_ref.max() > 0:
-        I_ref = I_ref / I_ref.max()
+    if cfg.NORMALIZATION == "reference":
+        if I_ref.max() > 0:
+            I_ref = I_ref / I_ref.max()
+    elif cfg.NORMALIZATION in ("area", "reference_area"):
+        area = np.trapezoid(I_ref, E_ref)
+        if area > 0:
+            I_ref = I_ref / area
+    elif cfg.NORMALIZATION == "none":
+        pass
     ax.plot(
         E_ref, I_ref,
         color="black", linewidth=1, linestyle="--",
@@ -29,9 +36,9 @@ def _plot_reference(ax, cfg: Config) -> None:
     )
 
 
-def _finish(fig, ax, cfg: Config, out_path: str, show: bool) -> str:
+def _finish(fig, ax, cfg: Config, out_path: str, show: bool, ylabel: str = "Intensity") -> str:
     ax.set_xlabel("Energy (eV)")
-    ax.set_ylabel("Intensity")
+    ax.set_ylabel(ylabel)
     ax.set_xlim(cfg.E_min, cfg.E_max)
     ax.legend()
     fig.tight_layout()
@@ -77,16 +84,26 @@ def overlay_sigma(
     import matplotlib.pyplot as plt
 
     Nv = results[0]["Nv"] if results else "?"
+
+    # Every result's ``spectrum`` is already normalized (in spectrum.py) by
+    # the same σ=0 reference peak, so they can be plotted as-is: the σ=0
+    # curve peaks at 1 and disordered curves peak below it -- making the
+    # disorder-driven peak reduction visible.
+    have_ref = bool(results) and all(r.get("reference_max") is not None for r in results)
+    ref_label = "σ=0 eV" if have_ref else None
+
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.set_title(f"Absorption vs disorder strength (Nv={Nv}, κ/ω = 2.2)")
+    title = f"Absorption vs disorder strength (Nv={Nv}, κ/ω = 2.2)"
+    if have_ref:
+        title += f"  [normalized to {ref_label}]"
+    ax.set_title(title)
 
     for res in sorted(results, key=lambda r: r["sigma"]):
-        ax.plot(
-            res["E"], res["spectrum"], linewidth=1.5, label=f"σ={res['sigma']:g} eV"
-        )
+        ax.plot(res["E"], res["spectrum"], linewidth=1.5, label=f"σ={res['sigma']:g} eV")
 
     _plot_reference(ax, cfg)  # drawn last -> sits on top
-    return _finish(fig, ax, cfg, out_path, show)
+    ylabel = f"Intensity (rel. to {ref_label})" if have_ref else "Intensity"
+    return _finish(fig, ax, cfg, out_path, show, ylabel=ylabel)
 
 
 
