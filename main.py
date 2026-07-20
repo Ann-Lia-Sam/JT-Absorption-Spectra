@@ -79,6 +79,24 @@ def parse_args():
                    help="Overlay the reference curve on top (use --no-reference to hide).")
     p.add_argument("--reference-file", default=None,
                    help="Path to the reference curve (default: config reference_file).")
+    # ---- heatmap mode (vibronic basis: P(v) / participation ratio) ----
+    p.add_argument("--heatmap", action="store_true",
+                   help="Run the vibronic-basis P(v)/PR heatmap workflow (SM Sec. I.A & II) "
+                        "instead of the absorption-spectrum sweep. Always produces the σ=0 "
+                        "Fig. S1 heatmap; adds a disorder-averaged, energy-resolved heatmap "
+                        "when --heatmap-sigma>0 or --heatmap-realizations>1.")
+    p.add_argument("--heatmap-nv", type=int, default=None,
+                   help="Fock states per vibrational mode for the vibronic diagonalization "
+                        "(default: config heatmap_nv, i.e. 18 as in the paper).")
+    p.add_argument("--heatmap-sigma", type=float, default=None,
+                   help="Disorder strength for the averaged heatmap (default: config).")
+    p.add_argument("--heatmap-realizations", type=int, default=None,
+                   help="Disorder realizations for the averaged heatmap (default: config).")
+    p.add_argument("--heatmap-threshold", type=float, default=None,
+                   help="Relative intensity threshold selecting bright polariton states "
+                        "for the Fig. S1 heatmap (default: config heatmap_bright_threshold).")
+    p.add_argument("--heatmap-which", choices=["1", "2", "avg"], default=None,
+                   help="Which molecule's P(v) to report: '1', '2', or 'avg' (default: config).")
     return p.parse_args()
 
 
@@ -176,6 +194,64 @@ def run_realization_sweep(args, cfg: Config) -> None:
     print(f"\nOverlay figure: {out_fig}")
 
 
+def run_heatmap(args, cfg: Config) -> None:
+    """Vibronic-basis P(v)/PR heatmap workflow (SM Sec. I.A & II).
+
+    Always produces the σ=0 Fig. S1 heatmap (single-molecule occupation of the
+    vibronic sectors for the bright polaritonic states). If disorder is requested
+    (``heatmap_sigma>0`` or ``heatmap_realizations>1``), also produces the
+    disorder-averaged, energy-resolved sector-population heatmap, using the same
+    disorder draws as the absorption-spectrum pipeline.
+    """
+    # Deferred imports: keep the fast spectrum path free of these modules.
+    from spectrum import heatmap as hm
+    from spectrum.plotting import plot_disorder_heatmap, plot_figS1
+    from spectrum.storage import save_disorder_heatmap, save_figS1
+
+    ensure_results_dir(cfg)
+
+    # ---- σ=0 Fig. S1 reproduction (always) ----
+    print(f"[heatmap] σ=0 Fig. S1 (Nv={cfg.heatmap_nv}) ...")
+    figS1 = hm.sigma0_heatmap(cfg)
+    npz = save_figS1(figS1, cfg)
+    out_figS1 = os.path.join(cfg.results_dir, f"heatmap_figS1_Nv{cfg.heatmap_nv}.png")
+    plot_figS1(figS1, cfg, out_figS1, show=not args.no_show)
+    n_bright = figS1.heatmap.shape[1]
+    print(f"  bright states = {n_bright}  |  sector v in [{figS1.grid[0]}, {figS1.grid[-1]}]  |  "
+          f"PR(bright) in [{figS1.pr.min():.2f}, {figS1.pr.max():.2f}]")
+    print(f"  saved -> {npz}\n         {out_figS1}")
+
+    # ---- disorder-averaged, energy-resolved heatmap (if requested) ----
+    if cfg.heatmap_sigma > 0 or cfg.heatmap_realizations > 1:
+        print(f"\n[heatmap] disorder average (Nv={cfg.heatmap_nv}, σ={cfg.heatmap_sigma:g}, "
+              f"{cfg.heatmap_realizations} real.) ...")
+        dh = hm.disorder_average_heatmap(cfg, show_progress=True)
+        npz2 = save_disorder_heatmap(dh, cfg)
+        out_dh = os.path.join(
+            cfg.results_dir,
+            f"heatmap_Nv{cfg.heatmap_nv}_sigma{cfg.heatmap_sigma:g}_real{cfg.heatmap_realizations}.png",
+        )
+        plot_disorder_heatmap(dh, cfg, out_dh, show=not args.no_show)
+        good = dh.spectrum > 1e-6 * dh.spectrum.max()
+        pr_lo = float(dh.PR[good].min()) if good.any() else 0.0
+        pr_hi = float(dh.PR[good].max()) if good.any() else 0.0
+        print(f"  PR(E) over the spectrum in [{pr_lo:.2f}, {pr_hi:.2f}]")
+        print(f"  saved -> {npz2}\n         {out_dh}")
+
+
+def _apply_heatmap_args(args, cfg: Config) -> None:
+    if args.heatmap_nv is not None:
+        cfg.heatmap_nv = args.heatmap_nv
+    if args.heatmap_sigma is not None:
+        cfg.heatmap_sigma = args.heatmap_sigma
+    if args.heatmap_realizations is not None:
+        cfg.heatmap_realizations = args.heatmap_realizations
+    if args.heatmap_threshold is not None:
+        cfg.heatmap_bright_threshold = args.heatmap_threshold
+    if args.heatmap_which is not None:
+        cfg.heatmap_which_molecule = args.heatmap_which
+
+
 def main():
     args = parse_args()
 
@@ -189,6 +265,11 @@ def main():
     if args.workers is not None:
         cfg.n_workers = args.workers
     apply_reference_args(args, cfg)
+    _apply_heatmap_args(args, cfg)
+
+    if args.heatmap:
+        run_heatmap(args, cfg)
+        return
 
     if args.sigma_sweep:
         run_sigma_sweep(args, cfg)

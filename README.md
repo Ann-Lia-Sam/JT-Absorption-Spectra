@@ -16,6 +16,7 @@ into a reusable, resumable, progress-tracked command-line tool.
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Command-line usage](#command-line-usage)
+- [Vibronic basis, P(v) & participation-ratio heatmap](#vibronic-basis-pv--participation-ratio-heatmap)
 - [Configuration](#configuration)
 - [Output files](#output-files)
 - [How it works](#how-it-works)
@@ -85,12 +86,23 @@ Summer-Internship-2026/
 │   ├── hamiltonian.py      # static H (built once/Nv) + per-realization diagonal
 │   ├── spectrum.py         # disorder averaging + Lorentzian broadening
 │   ├── storage.py          # per-Nv save/load (.npz + .dat), resume logic
-│   └── plotting.py         # overlay all spectra (+ optional reference curve)
+│   ├── plotting.py         # overlay all spectra (+ optional reference curve) + heatmaps
+│   │                       # --- vibronic / P(v) / PR workflow (SM Sec. I.A & II) ---
+│   ├── disorder.py         # shared disorder draws (same stream as spectrum.py)
+│   ├── vibronic.py         # one-molecule vibronic basis (diagonalize Ĥ_{m,k})
+│   ├── polariton.py        # vibronic → polaritonic sector Hamiltonian (Eq. S1) + solve
+│   ├── participation.py    # P(v) (Eq. S10), heatmap, PR = 1/Σ P(v)²
+│   └── heatmap.py          # σ=0 Fig. S1 + disorder-averaged energy-resolved heatmap
+├── tests/                  # runnable directly (no pytest needed)
+│   ├── test_disorder.py            # disorder stream matches spectrum.py
+│   ├── test_vibronic_route.py      # vibronic == primitive; P(v) → Eq. S10 at σ=0
+│   └── test_spectrum_unchanged.py  # spectrum pipeline byte-for-byte unchanged
 └── results/                # created at runtime
     ├── spectrum_Nv2.npz    # full result per Nv (arrays + provenance)
     ├── spectrum_Nv2.dat    # portable two-column text (E, intensity)
-    ├── ...
-    └── overlay_spectra.png # final overlaid figure
+    ├── overlay_spectra.png # final overlaid figure
+    ├── heatmap_figS1_Nv18.png        # σ=0 Fig. S1 reproduction
+    └── heatmap_Nv18_sigma…_real….png # disorder-averaged energy-resolved heatmap
 ```
 
 ---
@@ -231,6 +243,97 @@ cfg = Config()
 results = compute_spectrum_realization_sweep(Nv=12, realization_list=[10, 50, 100], cfg=cfg)
 for res in results:
     print(res["n_realizations"], res["spectrum"].max())
+```
+
+---
+
+## Vibronic basis, P(v) & participation-ratio heatmap
+
+A **separate, additive** workflow reimplements Sec. I.A and Sec. II (Eqs. S7–S10)
+of the paper's Supplemental Material. It does **not** touch the absorption-spectrum
+pipeline above — the spectrum modules are untouched and produce byte-identical
+results (guarded by [`tests/test_spectrum_unchanged.py`](tests/test_spectrum_unchanged.py)).
+
+**What it does, per disorder realization** (using the *same* `(delta1, delta2)` draws
+as the spectrum, via [`spectrum/disorder.py`](spectrum/disorder.py)):
+
+1. **One-molecule vibronic basis** ([`spectrum/vibronic.py`](spectrum/vibronic.py)) —
+   build and diagonalize each molecule's JT Hamiltonian `Ĥ_{m,k}` (Eq. 1) with its
+   own electronic energy `eps + delta_k`, block-diagonalizing by `(electronic class,
+   vibronic sector v)` so every eigenvector `|λ^v_j>` has a definite `v = 2(n₊−n₋)+S_z`.
+2. **Vibronic → polaritonic** ([`spectrum/polariton.py`](spectrum/polariton.py)) —
+   build the two-molecule + photon `(nex=1, j=-1)` sector from the vibronic
+   eigenstates, assemble the cavity Hamiltonian `Ĥ'` (Eq. S1) via the matter-cavity
+   matrices `α_{ij}, β_{ij}`, and diagonalize to get the polaritonic eigenstates
+   `C_{a,b,p}`.
+3. **P(v)** ([`spectrum/participation.py`](spectrum/participation.py)) — the
+   single-molecule sector occupation `P(v₀) = Σ_{a:v_a=v₀} Σ_{b,p} |C_{a,b,p}|²`. This
+   is the distinguishable-molecule form of Eq. (S10) — required because disorder makes
+   the two molecules inequivalent — and it reduces **term-by-term** to Eq. (S10) at
+   `σ=0`, where the bright states are 1↔2 symmetric
+   ([`tests/test_vibronic_route.py`](tests/test_vibronic_route.py)).
+4. **Heatmap & PR** — `P(v)` per polaritonic eigenstate, and `PR = 1/Σ_v P(v)²`.
+
+The vibronic route is a per-molecule change of basis of the primitive-basis
+Hamiltonian, so at `σ=0` it reproduces the spectrum eigenvalues and intensities to
+machine precision (also checked in `test_vibronic_route.py`).
+
+**Two performance shortcuts** (both exact — not approximations, verified in
+`test_vibronic_route.py`):
+
+- **Cached vibronic reference.** `eps_k` enters the excited-electronic block only
+  as a uniform diagonal shift, so the one-molecule vibronic *eigenvectors* and
+  sector labels don't depend on it. `diagonalize_single_molecule_reference(cfg)`
+  diagonalizes once (at `eps_k=0`); `shift_reference(reference, eps_k)` then
+  reuses it for any molecule/realization via an O(1) eigenvalue shift instead of
+  re-diagonalizing. This is reused across every realization and both molecules
+  (and once per worker process under `--workers`).
+- **`σ=0` shortcut.** Every disorder draw at `σ=0` is `eps + rng.normal(0,0) ==
+  eps` exactly, so every realization is identical. `disorder_average_heatmap`
+  detects this and solves once instead of looping `heatmap_realizations` times —
+  the same result, ~`heatmap_realizations`× faster.
+
+Note: the per-realization *polariton-sector* diagonalization (dimension grows
+with `Nv`) is the dominant cost at `σ>0` and is inherent to the method — each
+disordered realization has a genuinely different Hamiltonian that must be
+diagonalized. The cached-reference shortcut removes the (now provably
+redundant) one-molecule diagonalizations around it.
+
+**Two outputs:**
+
+- **`σ=0` Fig. S1** — the discrete heatmap `P(v)` vs. bright-polariton index (energy
+  ordered), reproducing the paper: ~42 bright states, sectors up to ±14, and PR up to
+  ~20 in the UP branch.
+- **disorder-averaged, energy-resolved heatmap** — each bright state contributes
+  `intensity · P(v)`, Lorentzian-broadened in energy and averaged over realizations.
+  Summing over `v` returns the polariton absorption spectrum, so it is a
+  *sector-resolved* view of the spectrum; `PR(E)` is computed from the averaged `P(v)`.
+
+```bash
+# Reproduce the σ=0 Fig. S1 heatmap (paper uses Nv=18; Nv=12 already gives PR≤20)
+venv/bin/python main.py --heatmap --heatmap-nv 12 --no-show
+
+# Add a disorder-averaged, energy-resolved heatmap (same draws as the spectrum)
+venv/bin/python main.py --heatmap --heatmap-nv 12 \
+    --heatmap-sigma 0.05 --heatmap-realizations 100 --workers 20 --no-show
+```
+
+| Flag                       | Description                                                        |
+|----------------------------|--------------------------------------------------------------------|
+| `--heatmap`                | Run the vibronic P(v)/PR workflow instead of the spectrum sweep.   |
+| `--heatmap-nv N`           | Fock states per vibrational mode (default 18, as in the paper).    |
+| `--heatmap-sigma S`        | Disorder strength for the averaged heatmap (0 → Fig. S1 only).     |
+| `--heatmap-realizations R` | Disorder realizations (same draws as the spectrum pipeline).       |
+| `--heatmap-threshold T`    | Relative intensity for "bright" states (default `1e-2` → ~40).     |
+| `--heatmap-which {1,2,avg}`| Which molecule's `P(v)` to report (`avg` = symmetric, Eq. S10).    |
+
+Outputs (in `results/`): `heatmap_figS1_Nv{N}.{npz,png}` and
+`heatmap_Nv{N}_sigma{σ}_real{R}.{npz,png}`.
+
+**Tests** (no pytest required — each file is runnable directly):
+
+```bash
+for t in tests/test_*.py; do venv/bin/python "$t"; done
 ```
 
 ---

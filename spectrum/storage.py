@@ -280,3 +280,58 @@ def load_realization_result(Nv: int, sigma: float, n: int, cfg: Config) -> Optio
         "all_evals": data["all_evals"],
         "all_intensity": data["all_intensity"],
     }
+
+
+# ---------------------------------------------------------------------------
+# Heatmap / participation-ratio results (vibronic workflow)
+# ---------------------------------------------------------------------------
+def figS1_path(cfg: Config) -> str:
+    return os.path.join(cfg.results_dir, f"heatmap_figS1_Nv{cfg.heatmap_nv}.npz")
+
+
+def disorder_heatmap_path(cfg: Config, sigma: float, n: int) -> str:
+    return os.path.join(
+        cfg.results_dir,
+        f"heatmap_Nv{cfg.heatmap_nv}_{_sigma_tag(sigma)}_real{n}.npz",
+    )
+
+
+def save_figS1(hm, cfg: Config) -> str:
+    """Persist a discrete Fig. S1 heatmap (:class:`participation.HeatmapResult`)."""
+    ensure_results_dir(cfg)
+    path = figS1_path(cfg)
+    np.savez_compressed(
+        path,
+        grid=hm.grid,
+        heatmap=hm.heatmap,
+        energies=hm.energies,
+        intensity=hm.intensity,
+        pr=hm.pr,
+        bright_idx=hm.bright_idx,
+        Nv=cfg.heatmap_nv,
+        which_molecule=cfg.heatmap_which_molecule,
+        bright_threshold=cfg.heatmap_bright_threshold,
+    )
+    return path
+
+
+def save_disorder_heatmap(dh, cfg: Config) -> str:
+    """Persist a disorder-averaged heatmap (:class:`heatmap.DisorderHeatmap`)."""
+    ensure_results_dir(cfg)
+    path = disorder_heatmap_path(cfg, dh.sigma, dh.n_realizations)
+    np.savez_compressed(
+        path,
+        grid=dh.grid,
+        E=dh.E,
+        M=dh.M,
+        spectrum=dh.spectrum,
+        Pv_norm=dh.Pv_norm,
+        PR=dh.PR,
+        sigma=dh.sigma,
+        n_realizations=dh.n_realizations,
+        Nv=dh.Nv,
+        which_molecule=cfg.heatmap_which_molecule,
+        gamma=cfg.gamma,
+        rng_seed=cfg.rng_seed,
+    )
+    return path

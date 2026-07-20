@@ -36,7 +36,7 @@ class Config:
     # "area"           -- divide the final averaged spectrum by its own
     #   integral (trapezoidal over E), so that ∫I(E)dE = 1.
     # "none"           -- leave the averaged spectrum unchanged.
-    NORMALIZATION: str = "reference_area"
+    NORMALIZATION: str = "reference"
 
     # ---------------- Disorder ----------------
     sigma: float = 0.24            # disorder strength W (eV)
@@ -73,6 +73,35 @@ class Config:
     realization_list: List[int] = field(
         default_factory=lambda: [ 100 ]
     )
+
+    # ---------------- Vibronic / heatmap workflow (Participation Ratio) ----------------
+    # These parameters drive the *separate* vibronic-basis workflow (SM Sec. I.A and
+    # Sec. II of the paper): single-molecule vibronic eigenbasis -> two-molecule +
+    # photon polaritonic Hamiltonian -> P(v) (Eq. S10) -> heatmap / PR. They do NOT
+    # affect the absorption-spectrum pipeline in any way.
+    #
+    # Number of Fock states per vibrational mode used when diagonalizing the
+    # single-molecule JT Hamiltonian. The paper uses 18 (SM Sec. I.B).
+    heatmap_nv: int = 18
+    # Disorder strength for the heatmap workflow. 0.0 reproduces the paper's Fig. S1.
+    heatmap_sigma: float = 0.0
+    # Number of disorder realizations for the disorder-averaged heatmap.
+    heatmap_realizations: int = 1
+    # A polaritonic eigenstate counts as "bright" if its absorption intensity
+    # (squared overlap with the RCP-photon initial state) exceeds this fraction of
+    # the brightest state's intensity. Controls which stems appear in the Fig. S1
+    # style heatmap. 1e-2 selects ~40 bright states at Nv=12/18, matching the ~41
+    # stems on the x-axis of the paper's Fig. S1 (and PR up to ~20 as reported).
+    heatmap_bright_threshold: float = 1.0e-2
+    # Which molecule's single-molecule sector probability to report in the heatmap:
+    # "avg" (mean of the two molecules -- identical to either one at sigma=0, and the
+    # symmetric quantity of Eq. S10), "1", or "2".
+    heatmap_which_molecule: str = "avg"
+    # Energy grid for the disorder-averaged, energy-resolved heatmap (defaults to the
+    # spectrum grid so the heatmap lines up with the polariton spectrum).
+    heatmap_E_min: Optional[float] = None
+    heatmap_E_max: Optional[float] = None
+    heatmap_E_points: int = 400
 
     # ---------------- Paths ----------------
     results_dir: str = "results"
