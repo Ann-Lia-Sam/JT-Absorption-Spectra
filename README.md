@@ -16,6 +16,7 @@ into a reusable, resumable, progress-tracked command-line tool.
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Command-line usage](#command-line-usage)
+- [Representative disorder realizations (analysis)](#representative-disorder-realizations-analysis)
 - [Configuration](#configuration)
 - [Output files](#output-files)
 - [How it works](#how-it-works)
@@ -85,12 +86,16 @@ Summer-Internship-2026/
 │   ├── hamiltonian.py      # static H (built once/Nv) + per-realization diagonal
 │   ├── spectrum.py         # disorder averaging + Lorentzian broadening
 │   ├── storage.py          # per-Nv save/load (.npz + .dat), resume logic
-│   └── plotting.py         # overlay all spectra (+ optional reference curve)
+│   ├── plotting.py         # overlay all spectra (+ optional reference curve) + representative plots
+│   └── representative.py  # representative-disorder-realization analysis (Pass 1 + Pass 2)
+├── tests/
+│   └── test_representative.py  # RNG-stream match, Pass-2 exactness, spectrum-unchanged pin
 └── results/                # created at runtime
     ├── spectrum_Nv2.npz    # full result per Nv (arrays + provenance)
     ├── spectrum_Nv2.dat    # portable two-column text (E, intensity)
-    ├── ...
-    └── overlay_spectra.png # final overlaid figure
+    ├── overlay_spectra.png # final overlaid figure
+    ├── representative_scatter_Nv12_sigma0.24.png
+    └── representative_spectrum_Nv12_sigma0.24_case{A..G}.png
 ```
 
 ---
@@ -232,6 +237,61 @@ results = compute_spectrum_realization_sweep(Nv=12, realization_list=[10, 50, 10
 for res in results:
     print(res["n_realizations"], res["spectrum"].max())
 ```
+
+---
+
+## Representative disorder realizations (analysis)
+
+A **separate, additive** analysis layer (`--representative`) examines the *individual*
+disorder realizations behind the averaged spectrum, without changing that spectrum's
+physics. The absorption-spectrum modules (`basis.py`, `operators.py`, `hamiltonian.py`,
+`spectrum.py`) are untouched; a regression test
+([`tests/test_representative.py`](tests/test_representative.py)) pins this.
+
+Two memory-light passes:
+
+1. **Pass 1** — call the existing disorder-averaging pipeline completely unmodified
+   (same averaged spectrum as always), and separately record lightweight per-realization
+   metadata (`index`, `eps1`, `eps2`, `delta1 = eps1 - eps`, `delta2 = eps2 - eps`) by
+   replaying the *same* RNG stream (same seed, same draw order) the pipeline uses
+   internally. No individual spectra are stored.
+2. **Automatic selection** — from that `(eps1, eps2)` cloud, pick the realization
+   closest to each of 7 physically meaningful targets:
+
+   | Case | Meaning |
+   |------|---------|
+   | A | Nearly no disorder (`eps1 ≈ eps`, `eps2 ≈ eps`) |
+   | B | Molecule 1 resonant with the cavity, molecule 2 far detuned |
+   | C | Reverse of B |
+   | D | Large *opposite* disorder (`eps1 = eps+δ`, `eps2 = eps-δ`, large `\|δ\|`) |
+   | E | Both shifted upward |
+   | F | Both shifted downward |
+   | G | Large disorder — realization nearest the *edge* of the sampled cloud (farthest from center, not closest to a point) |
+
+3. **Pass 2** — build the static Hamiltonian **once** (as the sigma-sweep code already
+   does) and recompute a full spectrum only for those ~7 selected realizations, reusing
+   the same Hamiltonian/diagonalization/broadening/normalization building blocks as the
+   main pipeline — so Pass 2's cost and memory footprint never scale with
+   `n_realizations`.
+
+```bash
+# 300 realizations at Nv=12 (defaults), scatter + 7 case plots + summary table
+venv/bin/python main.py --representative
+
+# Custom Nv / realization count / disorder strength, headless
+venv/bin/python main.py --representative --nv 8 --repr-realizations 500 --repr-sigma 0.3 --no-show
+```
+
+| Flag                    | Description                                                        |
+|-------------------------|----------------------------------------------------------------------|
+| `--representative`      | Run this analysis instead of the Nv sweep.                          |
+| `--repr-realizations N` | Realizations sampled for the cloud (default: `Config.representative_n_realizations`, 300). |
+| `--repr-sigma S`        | Disorder strength for this analysis (default: `Config.sigma`).      |
+
+Outputs (in `results/`): `representative_metadata_Nv{N}_sigma{σ}.csv` (all sampled
+realizations), `representative_summary_Nv{N}_sigma{σ}.csv` (the 7-case table),
+`representative_scatter_Nv{N}_sigma{σ}.png`, and one
+`representative_spectrum_Nv{N}_sigma{σ}_case{X}.{png,npz,dat}` per case.
 
 ---
 

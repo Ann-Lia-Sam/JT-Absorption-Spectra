@@ -79,6 +79,19 @@ def parse_args():
                    help="Overlay the reference curve on top (use --no-reference to hide).")
     p.add_argument("--reference-file", default=None,
                    help="Path to the reference curve (default: config reference_file).")
+    # ---- representative-disorder-realization analysis ----
+    p.add_argument("--representative", action="store_true",
+                   help="Run the two-pass representative-disorder-realization analysis "
+                        "instead of the Nv sweep. Pass 1 reuses the existing disorder "
+                        "averaging unmodified and records lightweight per-realization "
+                        "metadata; a handful of physically meaningful realizations "
+                        "(Cases A-G) are then automatically selected and, in Pass 2, "
+                        "individually recomputed.")
+    p.add_argument("--repr-realizations", type=int, default=None,
+                   help="Number of disorder realizations to sample for the (eps1, eps2) "
+                        "cloud (default: config representative_n_realizations).")
+    p.add_argument("--repr-sigma", type=float, default=None,
+                   help="Disorder strength sigma for this analysis (default: config.sigma).")
     return p.parse_args()
 
 
@@ -176,6 +189,67 @@ def run_realization_sweep(args, cfg: Config) -> None:
     print(f"\nOverlay figure: {out_fig}")
 
 
+def run_representative(args, cfg: Config) -> None:
+    """Two-pass representative-disorder-realization analysis.
+
+    Pass 1 calls the existing, unmodified disorder-averaging pipeline and
+    separately records lightweight per-realization metadata (no spectra kept in
+    memory beyond what the pipeline already returns). A handful of physically
+    meaningful realizations (Cases A-G) are then automatically selected from
+    that metadata, and Pass 2 recomputes a full spectrum only for those.
+    """
+    # Deferred imports: keep this analysis's modules out of the default path.
+    from spectrum import representative as repr_
+    from spectrum.plotting import plot_disorder_scatter, plot_representative_spectrum
+    from spectrum.storage import (
+        representative_scatter_path,
+        representative_spectrum_path,
+        save_representative_metadata,
+        save_representative_spectrum,
+        save_representative_summary,
+    )
+
+    Nv = args.nv[0] if args.nv else cfg.representative_nv
+    cfg.n_realizations = (
+        args.repr_realizations if args.repr_realizations is not None
+        else cfg.representative_n_realizations
+    )
+    if args.repr_sigma is not None:
+        cfg.sigma = args.repr_sigma
+
+    ensure_results_dir(cfg)
+
+    print(f"[representative] Pass 1: disorder-averaged spectrum + metadata "
+          f"(Nv={Nv}, sigma={cfg.sigma:g}, {cfg.n_realizations} realizations) ...")
+    result = repr_.run_representative_analysis(Nv, cfg, show_progress=True)
+
+    meta_path = save_representative_metadata(result["metadata"], cfg, Nv)
+    tqdm.write(f"  metadata ({len(result['metadata'])} realizations) -> {meta_path}")
+
+    scatter_path = representative_scatter_path(cfg, Nv)
+    plot_disorder_scatter(result["metadata"], result["representative"], cfg, Nv,
+                           scatter_path, show=not args.no_show)
+    tqdm.write(f"  scatter plot -> {scatter_path}")
+
+    summary_path = save_representative_summary(result["representative"], cfg, Nv)
+    tqdm.write(f"  summary table -> {summary_path}")
+
+    print(f"\n[representative] Pass 2: recomputed "
+          f"{len(result['representative'])} representative realizations")
+    header = f"{'Case':<32}{'Idx':>6}{'eps1':>10}{'eps2':>10}{'delta1':>10}{'delta2':>10}"
+    print(f"\n{header}")
+    print("-" * len(header))
+    for name, res in result["representative"].items():
+        print(f"{name:<32}{res['realization_index']:>6}{res['eps1']:>10.4f}"
+              f"{res['eps2']:>10.4f}{res['delta1']:>10.4f}{res['delta2']:>10.4f}")
+
+        save_representative_spectrum(res, cfg, Nv)
+        out_path = representative_spectrum_path(cfg, Nv, res["case"])
+        plot_representative_spectrum(res, result["average"], cfg, out_path, show=not args.no_show)
+
+    print(f"\nDone. All outputs in {cfg.results_dir}/")
+
+
 def main():
     args = parse_args()
 
@@ -189,6 +263,10 @@ def main():
     if args.workers is not None:
         cfg.n_workers = args.workers
     apply_reference_args(args, cfg)
+
+    if args.representative:
+        run_representative(args, cfg)
+        return
 
     if args.sigma_sweep:
         run_sigma_sweep(args, cfg)

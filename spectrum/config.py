@@ -74,6 +74,17 @@ class Config:
         default_factory=lambda: [ 100 ]
     )
 
+    # ---------------- Representative disorder realizations (analysis) ----------------
+    # These parameters drive a *separate* analysis workflow (--representative):
+    # Pass 1 reuses the existing disorder-averaged spectrum unchanged and records
+    # lightweight per-realization metadata (eps1, eps2); a handful of physically
+    # meaningful realizations are then automatically selected and, in Pass 2,
+    # individually recomputed (reusing the same Hamiltonian/diagonalization/
+    # broadening/normalization building blocks, unmodified). See
+    # spectrum/representative.py. Does not affect the absorption-spectrum pipeline.
+    representative_nv: int = 12          # Nv used for this analysis
+    representative_n_realizations: int = 300  # realizations sampled for the (eps1,eps2) cloud
+
     # ---------------- Paths ----------------
     results_dir: str = "results"
     # "Without disorder" reference curve. Columns: E, I (0 and 1). Plotted on top

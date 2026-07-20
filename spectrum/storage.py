@@ -1,7 +1,8 @@
 """Per-Nv result persistence and resume/skip support."""
 
+import csv
 import os
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 
@@ -280,3 +281,86 @@ def load_realization_result(Nv: int, sigma: float, n: int, cfg: Config) -> Optio
         "all_evals": data["all_evals"],
         "all_intensity": data["all_intensity"],
     }
+
+
+# ---------------------------------------------------------------------------
+# Representative disorder realizations (analysis; see spectrum/representative.py)
+# ---------------------------------------------------------------------------
+def representative_metadata_path(cfg: Config, Nv: int) -> str:
+    return os.path.join(cfg.results_dir, f"representative_metadata_Nv{Nv}_{_sigma_tag(cfg.sigma)}.csv")
+
+
+def representative_summary_path(cfg: Config, Nv: int) -> str:
+    return os.path.join(cfg.results_dir, f"representative_summary_Nv{Nv}_{_sigma_tag(cfg.sigma)}.csv")
+
+
+def representative_scatter_path(cfg: Config, Nv: int) -> str:
+    return os.path.join(cfg.results_dir, f"representative_scatter_Nv{Nv}_{_sigma_tag(cfg.sigma)}.png")
+
+
+def _case_slug(case_name: str) -> str:
+    """``"A: Nearly no disorder"`` -> ``"caseA"``."""
+    letter = case_name.split(":")[0].strip()
+    return f"case{letter}"
+
+
+def representative_spectrum_path(cfg: Config, Nv: int, case_name: str, ext: str = "png") -> str:
+    return os.path.join(
+        cfg.results_dir,
+        f"representative_spectrum_Nv{Nv}_{_sigma_tag(cfg.sigma)}_{_case_slug(case_name)}.{ext}",
+    )
+
+
+def save_representative_metadata(metadata: List, cfg: Config, Nv: int) -> str:
+    """Save every Pass-1 realization's lightweight metadata as a portable CSV."""
+    ensure_results_dir(cfg)
+    path = representative_metadata_path(cfg, Nv)
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow([f"# Nv={Nv} sigma={cfg.sigma:g} n_real={len(metadata)} rng_seed={cfg.rng_seed}"])
+        w.writerow(["index", "eps1", "eps2", "delta1", "delta2"])
+        for m in metadata:
+            w.writerow([m.index, f"{m.eps1:.6f}", f"{m.eps2:.6f}", f"{m.delta1:.6f}", f"{m.delta2:.6f}"])
+    return path
+
+
+def save_representative_summary(representative: Dict[str, Dict], cfg: Config, Nv: int) -> str:
+    """Save the case-by-case summary table (case, realization index, eps1, eps2, delta1, delta2)."""
+    ensure_results_dir(cfg)
+    path = representative_summary_path(cfg, Nv)
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["case", "description", "realization_index", "eps1", "eps2", "delta1", "delta2"])
+        for name, res in representative.items():
+            w.writerow([
+                name, res["description"], res["realization_index"],
+                f"{res['eps1']:.6f}", f"{res['eps2']:.6f}",
+                f"{res['delta1']:.6f}", f"{res['delta2']:.6f}",
+            ])
+    return path
+
+
+def save_representative_spectrum(res: Dict, cfg: Config, Nv: int) -> str:
+    """Save one representative realization's Pass-2 spectrum: .npz + portable .dat."""
+    ensure_results_dir(cfg)
+    path = representative_spectrum_path(cfg, Nv, res["case"], ext="npz")
+    np.savez_compressed(
+        path,
+        Nv=Nv, dim=int(res["dim"]), case=res["case"], description=res["description"],
+        realization_index=int(res["realization_index"]),
+        eps1=float(res["eps1"]), eps2=float(res["eps2"]),
+        delta1=float(res["delta1"]), delta2=float(res["delta2"]),
+        E=res["E"], spectrum=res["spectrum"],
+        sigma=cfg.sigma, gamma=cfg.gamma, rng_seed=cfg.rng_seed,
+        normalization=cfg.NORMALIZATION,
+    )
+    dat_path_ = representative_spectrum_path(cfg, Nv, res["case"], ext="dat")
+    np.savetxt(
+        dat_path_,
+        np.column_stack([res["E"], res["spectrum"]]),
+        header=(
+            f"case={res['case']}  Nv={Nv}  realization={res['realization_index']}  "
+            f"eps1={res['eps1']:.6f}  eps2={res['eps2']:.6f}\nE(eV)    intensity"
+        ),
+    )
+    return path

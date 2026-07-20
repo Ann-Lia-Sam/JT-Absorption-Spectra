@@ -133,3 +133,76 @@ def overlay_realizations(
 
     _plot_reference(ax, cfg)  # drawn last -> sits on top
     return _finish(fig, ax, cfg, out_path, show)
+
+
+# ---------------------------------------------------------------------------
+# Representative disorder realizations (analysis; see spectrum/representative.py)
+# ---------------------------------------------------------------------------
+def plot_disorder_scatter(
+    metadata: List,
+    representative: Dict[str, Dict],
+    cfg: Config,
+    Nv: int,
+    out_path: str,
+    show: bool = True,
+) -> str:
+    """Scatter (eps1, eps2) for every sampled realization; highlight the cases."""
+    if not show:
+        matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    eps1 = np.array([m.eps1 for m in metadata])
+    eps2 = np.array([m.eps2 for m in metadata])
+
+    fig, ax = plt.subplots(figsize=(7, 7))
+    ax.scatter(eps1, eps2, s=10, alpha=0.35, color="steelblue",
+               label=f"{len(metadata)} realizations")
+    ax.plot(cfg.eps, cfg.eps, marker="+", color="black", markersize=14,
+            markeredgewidth=2, linestyle="none", label="clean (eps, eps)", zorder=4)
+
+    colors = plt.cm.tab10(np.linspace(0, 1, 10))
+    for i, (name, res) in enumerate(representative.items()):
+        letter = name.split(":")[0].strip()
+        ax.scatter(res["eps1"], res["eps2"], s=110, color=colors[i % 10],
+                   edgecolor="black", linewidth=0.8, zorder=5)
+        ax.annotate(letter, (res["eps1"], res["eps2"]), textcoords="offset points",
+                    xytext=(7, 7), fontsize=12, fontweight="bold")
+
+    ax.set_xlabel(r"$\epsilon_1$ (eV)")
+    ax.set_ylabel(r"$\epsilon_2$ (eV)")
+    ax.set_title(f"Disorder realizations (Nv={Nv}, σ={cfg.sigma:g} eV)")
+    ax.set_aspect("equal", adjustable="datalim")
+    ax.legend(loc="best", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=300, bbox_inches="tight")
+    if show:
+        plt.show()
+    plt.close(fig)
+    return out_path
+
+
+def plot_representative_spectrum(
+    rep_result: Dict,
+    avg_result: Dict,
+    cfg: Config,
+    out_path: str,
+    show: bool = True,
+) -> str:
+    """One representative (Pass-2) spectrum, overlaid with the disorder average."""
+    if not show:
+        matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot(avg_result["E"], avg_result["spectrum"], color="black", linewidth=1.5,
+            label=f"disorder average ({cfg.n_realizations} real.)")
+    ax.plot(rep_result["E"], rep_result["spectrum"], color="tab:red", linewidth=1.5,
+            label=f"realization #{rep_result['realization_index']}")
+
+    ax.set_title(
+        f"{rep_result['case']}\n"
+        f"realization #{rep_result['realization_index']}: "
+        rf"$\epsilon_1$={rep_result['eps1']:.3f} eV, "
+        rf"$\epsilon_2$={rep_result['eps2']:.3f} eV"
+    )
+    return _finish(fig, ax, cfg, out_path, show)
