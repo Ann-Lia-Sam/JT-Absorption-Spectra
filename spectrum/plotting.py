@@ -192,16 +192,20 @@ def plot_representative_spectrum(
     out_path: str,
     show: bool = True,
 ) -> str:
-    """One representative (Pass-2) spectrum, overlaid with the disorder average."""
+    """One representative (Pass-2) spectrum, overlaid with the disorder average
+    and the 'without disorder' reference curve (``cfg.reference_file``)."""
     if not show:
         matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.plot(avg_result["E"], avg_result["spectrum"], color="black", linewidth=1.5,
+    ax.plot(avg_result["E"], avg_result["spectrum"], color="tab:blue", linewidth=1.5,
             label=f"disorder average ({cfg.n_realizations} real.)")
     ax.plot(rep_result["E"], rep_result["spectrum"], color="tab:red", linewidth=1.5,
             label=f"realization #{rep_result['realization_index']}")
+    # Reference curve (spectrum_ref_2mol_2.2.pl), same styling/normalization as
+    # every other overlay in this module -- dashed black, drawn on top.
+    _plot_reference(ax, cfg)
 
     ax.set_title(
         f"{rep_result['case']}\n"
