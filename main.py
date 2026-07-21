@@ -16,6 +16,22 @@ Examples
 import argparse
 import os
 
+# ---------------------------------------------------------------------------
+# Pin BLAS/OpenMP to a single thread PER PROCESS *before* NumPy is imported.
+#
+# On this shared 40-core machine, letting OpenBLAS spin up one thread per core
+# for a single dense ``eigh`` oversubscribes the box and makes each
+# diagonalization dramatically slower (a single Nv=12 eigh went from ~63 s
+# pinned to well over 3 min unpinned -- see the blas-thread-perf-fix note).
+# Diagonalizations are instead parallelized *across processes* (cfg.n_workers /
+# --workers), where each worker already pins itself to one BLAS thread. Setting
+# these here fixes the serial path and the parent process too. Respect any
+# value the user has already exported.
+# ---------------------------------------------------------------------------
+for _var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS",
+             "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+
 from tqdm import tqdm
 
 from spectrum.config import Config
@@ -85,8 +101,8 @@ def parse_args():
                         "instead of the Nv sweep. Pass 1 reuses the existing disorder "
                         "averaging unmodified and records lightweight per-realization "
                         "metadata; a handful of physically meaningful realizations "
-                        "(Cases A-G) are then automatically selected and, in Pass 2, "
-                        "individually recomputed.")
+                        "(Cases A-K, selected by physical criteria) are then "
+                        "automatically selected and, in Pass 2, individually recomputed.")
     p.add_argument("--repr-realizations", type=int, default=None,
                    help="Number of disorder realizations to sample for the (eps1, eps2) "
                         "cloud (default: config representative_n_realizations).")
@@ -195,8 +211,9 @@ def run_representative(args, cfg: Config) -> None:
     Pass 1 calls the existing, unmodified disorder-averaging pipeline and
     separately records lightweight per-realization metadata (no spectra kept in
     memory beyond what the pipeline already returns). A handful of physically
-    meaningful realizations (Cases A-G) are then automatically selected from
-    that metadata, and Pass 2 recomputes a full spectrum only for those.
+    meaningful realizations (Cases A-K, selected by physical criteria) are then
+    automatically selected from that metadata, and Pass 2 recomputes a full
+    spectrum only for those.
     """
     # Deferred imports: keep this analysis's modules out of the default path.
     from spectrum import representative as repr_
@@ -216,6 +233,17 @@ def run_representative(args, cfg: Config) -> None:
     )
     if args.repr_sigma is not None:
         cfg.sigma = args.repr_sigma
+
+    # Pass 1 diagonalizes cfg.n_realizations dense Hamiltonians (~63 s each at
+    # Nv=12); serially that is ~100 min for 100 realizations. Unless the user
+    # pinned a worker count with --workers, auto-parallelize across processes
+    # (each pinned to one BLAS thread) so the run scales with the core count.
+    if cfg.n_workers is None:
+        usable = max(1, (os.cpu_count() or 1) - 2)
+        cfg.n_workers = max(1, min(usable, cfg.n_realizations))
+        if cfg.n_workers > 1:
+            print(f"[representative] auto-parallelizing over {cfg.n_workers} "
+                  f"worker processes (override with --workers N).")
 
     ensure_results_dir(cfg)
 

@@ -36,7 +36,7 @@ class Config:
     # "area"           -- divide the final averaged spectrum by its own
     #   integral (trapezoidal over E), so that ∫I(E)dE = 1.
     # "none"           -- leave the averaged spectrum unchanged.
-    NORMALIZATION: str = "reference_area"
+    NORMALIZATION: str = "reference"
 
     # ---------------- Disorder ----------------
     sigma: float = 0.24            # disorder strength W (eV)

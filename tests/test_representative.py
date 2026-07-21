@@ -86,22 +86,80 @@ def test_case_selection_sanity():
     metadata = rep.collect_realization_metadata(cfg, sigma=0.3, n_real=500)
     selections = rep.select_representative_realizations(metadata, cfg, sigma=0.3)
 
-    assert set(s["letter"] for s in selections.values()) == set("ABCDEFG")
+    # All 11 physical cases A-K selected.
+    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGHIJK")
+
+    # Every case claims a distinct realization (used_indices uniqueness).
+    chosen = [s["metadata"].index for s in selections.values()]
+    assert len(chosen) == len(set(chosen)) == 11
 
     eps1 = np.array([m.eps1 for m in metadata])
     eps2 = np.array([m.eps2 for m in metadata])
     dist_from_center = np.sqrt((eps1 - cfg.eps) ** 2 + (eps2 - cfg.eps) ** 2)
+    gap = np.abs(eps1 - eps2)
+    det1 = np.abs(eps1 - cfg.omega_c)
+    det2 = np.abs(eps2 - cfg.omega_c)
 
-    case_a = selections["A: Nearly no disorder"]["metadata"]
-    idx_a = next(i for i, m in enumerate(metadata) if m.index == case_a.index)
-    assert dist_from_center[idx_a] == dist_from_center.min()
+    def idx_of(letter):
+        m = next(s["metadata"] for s in selections.values() if s["letter"] == letter)
+        return next(i for i, mm in enumerate(metadata) if mm.index == m.index)
 
-    case_g = selections["G: Large disorder (edge of cloud)"]["metadata"]
-    idx_g = next(i for i, m in enumerate(metadata) if m.index == case_g.index)
-    assert dist_from_center[idx_g] == dist_from_center.max()
+    # A -- nearly no disorder: closest to the clean center of all UNUSED
+    # realizations; with A picked first it is simply the global minimum.
+    assert dist_from_center[idx_of("A")] == dist_from_center.min()
 
-    # Case A should be much closer to the center than Case G (a real cloud, not degenerate).
-    assert dist_from_center[idx_a] < dist_from_center[idx_g]
+    # K -- maximum energy mismatch: among the very largest gaps. (The global
+    # max may be claimed first by case G, which also maximizes the gap but only
+    # over opposite-sign realizations -- used_indices then hands K the largest
+    # remaining gap, so K sits within the top handful.)
+    assert gap[idx_of("K")] >= np.sort(gap)[-3]
+
+    # J -- nearly degenerate: much smaller gap than K.
+    assert gap[idx_of("J")] < gap[idx_of("K")]
+
+    # E -- both above resonance: both site energies exceed omega_c.
+    e = selections["E: Both above resonance"]["metadata"]
+    if selections["E: Both above resonance"]["filter_satisfied"]:
+        assert e.eps1 > cfg.omega_c and e.eps2 > cfg.omega_c
+
+    # F -- both below resonance: both site energies below omega_c.
+    f = selections["F: Both below resonance"]["metadata"]
+    if selections["F: Both below resonance"]["filter_satisfied"]:
+        assert f.eps1 < cfg.omega_c and f.eps2 < cfg.omega_c
+
+    # G -- opposite disorder: deviations from the clean energy have opposite signs.
+    g = selections["G: Opposite disorder"]["metadata"]
+    if selections["G: Opposite disorder"]["filter_satisfied"]:
+        assert (g.eps1 - cfg.eps) * (g.eps2 - cfg.eps) < 0
+
+    # I -- resonance mismatch: gap should be close to the coupling g.
+    assert abs(gap[idx_of("I")] - cfg.g) < abs(gap[idx_of("K")] - cfg.g)
+
+
+def test_pass2_reuse_matches_recompute():
+    """The fast Pass-2 path (reuse Pass-1 eigendata) must match the explicit
+    re-diagonalization path to float round-off, for every normalization mode."""
+    Nv = 4
+    for norm in ("none", "reference", "reference_area", "area"):
+        cfg = Config()
+        cfg.NORMALIZATION = norm
+        cfg.n_realizations = 8
+        cfg.sigma = 0.24
+        avg = compute_spectrum_for_Nv(Nv, cfg, show_progress=False)
+        md = rep.collect_realization_metadata(cfg)
+        sel = rep.select_representative_realizations(md, cfg)
+
+        reuse = rep.assemble_representative_spectra(Nv, sel, avg, cfg)
+        recompute = rep.recompute_representative_spectra(
+            Nv, sel, cfg,
+            reference_max=avg.get("reference_max"),
+            reference_area=avg.get("reference_area"),
+            show_progress=False,
+        )
+        assert set(reuse) == set(recompute)
+        for k in reuse:
+            assert reuse[k]["realization_index"] == recompute[k]["realization_index"]
+            assert np.allclose(reuse[k]["spectrum"], recompute[k]["spectrum"], atol=1e-11)
 
 
 def test_run_representative_analysis_end_to_end():
@@ -112,7 +170,7 @@ def test_run_representative_analysis_end_to_end():
     result = rep.run_representative_analysis(3, cfg, show_progress=False)
 
     assert len(result["metadata"]) == 25
-    assert len(result["representative"]) == 7
+    assert len(result["representative"]) == 11
     for name, res in result["representative"].items():
         assert res["case"] == name
         assert res["E"].shape == result["average"]["E"].shape

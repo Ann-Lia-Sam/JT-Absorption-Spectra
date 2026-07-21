@@ -159,6 +159,10 @@ def plot_disorder_scatter(
                label=f"{len(metadata)} realizations")
     ax.plot(cfg.eps, cfg.eps, marker="+", color="black", markersize=14,
             markeredgewidth=2, linestyle="none", label="clean (eps, eps)", zorder=4)
+    # Cavity-resonance reference lines (cases B-F are defined relative to omega_c).
+    ax.axvline(cfg.omega_c, color="gray", linestyle=":", linewidth=1, zorder=1)
+    ax.axhline(cfg.omega_c, color="gray", linestyle=":", linewidth=1,
+               label=r"$\omega_c$ (cavity resonance)", zorder=1)
 
     colors = plt.cm.tab10(np.linspace(0, 1, 10))
     for i, (name, res) in enumerate(representative.items()):
