@@ -211,6 +211,7 @@ def plot_representative_spectrum(
         f"{rep_result['case']}\n"
         f"realization #{rep_result['realization_index']}: "
         rf"$\epsilon_1$={rep_result['eps1']:.3f} eV, "
-        rf"$\epsilon_2$={rep_result['eps2']:.3f} eV"
+        rf"$\epsilon_2$={rep_result['eps2']:.3f} eV "
+        f"(σ={cfg.sigma:g} eV)"
     )
     return _finish(fig, ax, cfg, out_path, show)

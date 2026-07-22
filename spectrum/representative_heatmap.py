@@ -243,7 +243,7 @@ def plot_representative_heatmap(
         f"{entry['case']}\n"
         f"realization #{entry['realization_index']}: "
         rf"$\epsilon_1$={entry['eps1']:.3f} eV, $\epsilon_2$={entry['eps2']:.3f} eV "
-        f"(Nv={cfg.heatmap_nv}, σ={cfg.sigma:g})"
+        f"(Nv={cfg.heatmap_nv}, σ={cfg.sigma:g} eV)"
     )
     vlo, vhi = _crop_v_range(grid, heatmap)
     ax.set_ylim(vlo - 0.5, vhi + 0.5)
