@@ -300,6 +300,7 @@ def run_representative_heatmap(args, cfg: Config) -> None:
     """
     # Deferred imports: keep this analysis's modules off the default path.
     from spectrum import representative_heatmap as rh
+    from spectrum.storage import save_representative_summary
 
     Nv = args.nv[0] if args.nv else cfg.representative_nv
     cfg.n_realizations = (
@@ -326,6 +327,9 @@ def run_representative_heatmap(args, cfg: Config) -> None:
           f"{cfg.n_realizations} realizations) and building P(v) heatmaps "
           f"(heatmap_nv={cfg.heatmap_nv}) ...")
     result = rh.run_representative_heatmaps(Nv, cfg, show_progress=True)
+
+    summary_path = save_representative_summary(result["heatmaps"], cfg, Nv)
+    print(f"  case conditions table -> {summary_path}")
 
     header = f"{'Case':<32}{'Idx':>6}{'eps1':>10}{'eps2':>10}{'#bright':>9}"
     print(f"\n{header}")

@@ -74,6 +74,8 @@ def _heatmap_entry(sel: Dict, hm: participation.HeatmapResult) -> Dict:
         "eps2": m.eps2,
         "delta1": m.delta1,
         "delta2": m.delta2,
+        "score": sel.get("score"),
+        "filter_satisfied": sel.get("filter_satisfied"),
         # Fig. S1 heatmap arrays
         "grid": hm.grid,
         "bright_idx": hm.bright_idx,

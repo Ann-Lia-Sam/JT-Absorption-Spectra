@@ -325,17 +325,34 @@ def save_representative_metadata(metadata: List, cfg: Config, Nv: int) -> str:
 
 
 def save_representative_summary(representative: Dict[str, Dict], cfg: Config, Nv: int) -> str:
-    """Save the case-by-case summary table (case, realization index, eps1, eps2, delta1, delta2)."""
+    """Save the case-by-case conditions table: case, condition (description),
+    realization index, eps1/eps2, delta1/delta2, disorder magnitude
+    ``r = sqrt(delta1^2 + delta2^2)``, the case's selection score, and (for
+    filter-based cases) whether that filter was actually satisfied.
+
+    Written identically by both ``--representative`` and
+    ``--representative-heatmap`` (each calls this once its Case A-K selections
+    are known), so either workflow produces the same consolidated
+    case-conditions file at ``representative_summary_Nv{Nv}_sigma{sigma}.csv``.
+    ``score``/``filter_satisfied`` are written blank if a caller's per-case
+    dict doesn't carry them (kept optional for backward compatibility).
+    """
     ensure_results_dir(cfg)
     path = representative_summary_path(cfg, Nv)
     with open(path, "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["case", "description", "realization_index", "eps1", "eps2", "delta1", "delta2"])
+        w.writerow(["case", "description", "realization_index", "eps1", "eps2",
+                    "delta1", "delta2", "r", "score", "filter_satisfied"])
         for name, res in representative.items():
+            r = (res["delta1"] ** 2 + res["delta2"] ** 2) ** 0.5
+            score = res.get("score")
             w.writerow([
                 name, res["description"], res["realization_index"],
                 f"{res['eps1']:.6f}", f"{res['eps2']:.6f}",
                 f"{res['delta1']:.6f}", f"{res['delta2']:.6f}",
+                f"{r:.6f}",
+                f"{score:.6f}" if score is not None else "",
+                res.get("filter_satisfied", ""),
             ])
     return path
 

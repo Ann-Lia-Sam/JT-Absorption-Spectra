@@ -385,6 +385,8 @@ def recompute_representative_spectra(
             "realization_index": m.index,
             "delta1": m.delta1,
             "delta2": m.delta2,
+            "score": sel.get("score"),
+            "filter_satisfied": sel.get("filter_satisfied"),
         })
         results[name] = res
     return results
@@ -449,6 +451,8 @@ def assemble_representative_spectra(
             "realization_index": m.index,
             "delta1": m.delta1,
             "delta2": m.delta2,
+            "score": sel.get("score"),
+            "filter_satisfied": sel.get("filter_satisfied"),
         })
         results[name] = res
     return results
