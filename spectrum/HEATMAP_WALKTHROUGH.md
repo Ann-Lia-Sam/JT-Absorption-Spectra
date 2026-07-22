@@ -1033,7 +1033,7 @@ def representative_heatmap_path(cfg, Nv, case_name, ext="png") -> str:
 
 Builds the output path, reusing `storage.py`'s existing `_sigma_tag`
 (formats `sigma` filesystem-safely, e.g. `0.24` → `"sigma0.24"`) and
-`_case_slug` (`"A: Nearly no disorder"` → `"caseA"`) helpers — imported, not
+`_case_slug` (`"A: Resonant baseline"` → `"caseA"`) helpers — imported, not
 duplicated, so heatmap filenames stay consistent with the representative
 spectrum filenames.
 

@@ -2,7 +2,7 @@
 
 This is a *separate, additive* analysis layer (Option A). It reuses:
 
-* the physically-motivated Case A-K selection from
+* the physically-motivated Case A-H selection from
   :mod:`spectrum.representative` (which needs only each realization's drawn
   ``(eps1, eps2)`` -- no absorption diagonalization at all), and
 * the paper's vibronic -> polaritonic machinery
@@ -11,7 +11,7 @@ This is a *separate, additive* analysis layer (Option A). It reuses:
   discrete Fig. S1 heatmap of the single-molecule vibronic-sector population
   ``P(v)`` of the bright polaritonic states.
 
-For each of the (typically 11) selected realizations we do exactly **one**
+For each of the (typically 8) selected realizations we do exactly **one**
 polaritonic diagonalization. The single-molecule Jahn-Teller basis is
 diagonalized **once** (at ``eps_k = 0``) and reused for every molecule and every
 realization via :func:`spectrum.vibronic.shift_reference` (an O(1) rigid
@@ -191,7 +191,7 @@ def compute_representative_heatmaps(
 def run_representative_heatmaps(
     Nv: int, cfg: Config, show_progress: bool = True
 ) -> Dict:
-    """Full standalone workflow: select Cases A-K, then heatmap each.
+    """Full standalone workflow: select Cases A-H, then heatmap each.
 
     Selection uses only the drawn ``(eps1, eps2)`` cloud (RNG replay via
     :func:`spectrum.representative.collect_realization_metadata`), so this does

@@ -86,54 +86,65 @@ def test_case_selection_sanity():
     metadata = rep.collect_realization_metadata(cfg, sigma=0.3, n_real=500)
     selections = rep.select_representative_realizations(metadata, cfg, sigma=0.3)
 
-    # All 11 physical cases A-K selected.
-    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGHIJK")
+    # All 8 physical cases A-H selected.
+    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGH")
 
     # Every case claims a distinct realization (used_indices uniqueness).
     chosen = [s["metadata"].index for s in selections.values()]
-    assert len(chosen) == len(set(chosen)) == 11
+    assert len(chosen) == len(set(chosen)) == 8
 
     eps1 = np.array([m.eps1 for m in metadata])
     eps2 = np.array([m.eps2 for m in metadata])
-    dist_from_center = np.sqrt((eps1 - cfg.eps) ** 2 + (eps2 - cfg.eps) ** 2)
+    # Signed detunings from resonance; resonance is eps0 = cfg.eps (NOT omega_c).
+    d1 = eps1 - cfg.eps
+    d2 = eps2 - cfg.eps
+    dist_from_center = np.hypot(d1, d2)
     gap = np.abs(eps1 - eps2)
-    det1 = np.abs(eps1 - cfg.omega_c)
-    det2 = np.abs(eps2 - cfg.omega_c)
+    g = cfg.g
 
     def idx_of(letter):
         m = next(s["metadata"] for s in selections.values() if s["letter"] == letter)
         return next(i for i, mm in enumerate(metadata) if mm.index == m.index)
 
-    # A -- nearly no disorder: closest to the clean center of all UNUSED
-    # realizations; with A picked first it is simply the global minimum.
+    def filt_of(letter):
+        return next(s["filter_satisfied"] for s in selections.values()
+                    if s["letter"] == letter)
+
+    # A -- resonant baseline: closest to the clean center of all realizations;
+    # picked first, so it is simply the global minimum radial deviation.
     assert dist_from_center[idx_of("A")] == dist_from_center.min()
 
-    # K -- maximum energy mismatch: among the very largest gaps. (The global
-    # max may be claimed first by case G, which also maximizes the gap but only
-    # over opposite-sign realizations -- used_indices then hands K the largest
-    # remaining gap, so K sits within the top handful.)
-    assert gap[idx_of("K")] >= np.sort(gap)[-3]
+    # B -- mismatch ~ coupling: inter-molecular gap sits right at g.
+    assert abs(gap[idx_of("B")] - g) < 0.05
 
-    # J -- nearly degenerate: much smaller gap than K.
-    assert gap[idx_of("J")] < gap[idx_of("K")]
+    # C -- large mismatch (localized): same-sign pair whose gap exceeds g.
+    if filt_of("C"):
+        assert d1[idx_of("C")] * d2[idx_of("C")] > 0
+    assert gap[idx_of("C")] > g
 
-    # E -- both above resonance: both site energies exceed omega_c.
-    e = selections["E: Both above resonance"]["metadata"]
-    if selections["E: Both above resonance"]["filter_satisfied"]:
-        assert e.eps1 > cfg.omega_c and e.eps2 > cfg.omega_c
+    # D -- opposite disorder: detunings from resonance have opposite signs.
+    if filt_of("D"):
+        assert d1[idx_of("D")] * d2[idx_of("D")] < 0
 
-    # F -- both below resonance: both site energies below omega_c.
-    f = selections["F: Both below resonance"]["metadata"]
-    if selections["F: Both below resonance"]["filter_satisfied"]:
-        assert f.eps1 < cfg.omega_c and f.eps2 < cfg.omega_c
+    # E -- common blue detuning: both molecules ~ +g above resonance, matched.
+    iE = idx_of("E")
+    assert np.hypot(d1[iE] - g, d2[iE] - g) < 0.2
 
-    # G -- opposite disorder: deviations from the clean energy have opposite signs.
-    g = selections["G: Opposite disorder"]["metadata"]
-    if selections["G: Opposite disorder"]["filter_satisfied"]:
-        assert (g.eps1 - cfg.eps) * (g.eps2 - cfg.eps) < 0
+    # F -- common red detuning: both molecules ~ -g below resonance, matched.
+    iF = idx_of("F")
+    assert np.hypot(d1[iF] + g, d2[iF] + g) < 0.2
 
-    # I -- resonance mismatch: gap should be close to the coupling g.
-    assert abs(gap[idx_of("I")] - cfg.g) < abs(gap[idx_of("K")] - cfg.g)
+    # G -- single-molecule resonant: one molecule on resonance, other >~ g away.
+    iG = idx_of("G")
+    assert min(abs(d1[iG]), abs(d2[iG])) < 0.1
+    if filt_of("G"):
+        assert max(abs(d1[iG]), abs(d2[iG])) > g
+
+    # H -- bare-molecule limit: same-sign pair with BOTH molecules well past g.
+    iH = idx_of("H")
+    if filt_of("H"):
+        assert d1[iH] * d2[iH] > 0
+    assert min(abs(d1[iH]), abs(d2[iH])) > g
 
 
 def test_pass2_reuse_matches_recompute():
@@ -170,7 +181,7 @@ def test_run_representative_analysis_end_to_end():
     result = rep.run_representative_analysis(3, cfg, show_progress=False)
 
     assert len(result["metadata"]) == 25
-    assert len(result["representative"]) == 11
+    assert len(result["representative"]) == 8
     for name, res in result["representative"].items():
         assert res["case"] == name
         assert res["E"].shape == result["average"]["E"].shape

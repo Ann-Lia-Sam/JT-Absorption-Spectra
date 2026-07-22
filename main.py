@@ -101,7 +101,7 @@ def parse_args():
                         "instead of the Nv sweep. Pass 1 reuses the existing disorder "
                         "averaging unmodified and records lightweight per-realization "
                         "metadata; a handful of physically meaningful realizations "
-                        "(Cases A-K, selected by physical criteria) are then "
+                        "(Cases A-H, selected by physical criteria) are then "
                         "automatically selected and, in Pass 2, individually recomputed.")
     p.add_argument("--repr-realizations", type=int, default=None,
                    help="Number of disorder realizations to sample for the (eps1, eps2) "
@@ -111,7 +111,7 @@ def parse_args():
     # ---- P(v) heatmaps for the selected representatives (paper Fig. S1) ----
     p.add_argument("--representative-heatmap", action="store_true",
                    help="For each physically selected representative realization "
-                        "(Cases A-K, same selection as --representative), build the "
+                        "(Cases A-H, same selection as --representative), build the "
                         "vibronic->polaritonic Hamiltonian and plot the paper's "
                         "discrete Fig. S1 P(v) heatmap. Uses only the (eps1,eps2) "
                         "selection (no absorption disorder average), so it does just "
@@ -223,7 +223,7 @@ def run_representative(args, cfg: Config) -> None:
     Pass 1 calls the existing, unmodified disorder-averaging pipeline and
     separately records lightweight per-realization metadata (no spectra kept in
     memory beyond what the pipeline already returns). A handful of physically
-    meaningful realizations (Cases A-K, selected by physical criteria) are then
+    meaningful realizations (Cases A-H, selected by physical criteria) are then
     automatically selected from that metadata, and Pass 2 recomputes a full
     spectrum only for those.
     """
@@ -293,7 +293,7 @@ def run_representative(args, cfg: Config) -> None:
 def run_representative_heatmap(args, cfg: Config) -> None:
     """P(v) heatmaps (paper Fig. S1) for the selected representative realizations.
 
-    Standalone and cheap: the Case A-K selection needs only the drawn
+    Standalone and cheap: the Case A-H selection needs only the drawn
     ``(eps1, eps2)`` cloud, so this does NOT run the absorption disorder average
     -- just one polaritonic diagonalization per selected case (parallelizable via
     --workers). The frozen absorption pipeline is not touched.
@@ -312,7 +312,7 @@ def run_representative_heatmap(args, cfg: Config) -> None:
     if args.heatmap_nv is not None:
         cfg.heatmap_nv = args.heatmap_nv
 
-    # One diagonalization per selected case (typically 11). Auto-parallelize
+    # One diagonalization per selected case (typically 8). Auto-parallelize
     # across processes unless the user pinned --workers.
     if cfg.n_workers is None:
         usable = max(1, (os.cpu_count() or 1) - 2)
@@ -323,7 +323,7 @@ def run_representative_heatmap(args, cfg: Config) -> None:
 
     ensure_results_dir(cfg)
 
-    print(f"[repr-heatmap] selecting Cases A-K (Nv={Nv}, sigma={cfg.sigma:g}, "
+    print(f"[repr-heatmap] selecting Cases A-H (Nv={Nv}, sigma={cfg.sigma:g}, "
           f"{cfg.n_realizations} realizations) and building P(v) heatmaps "
           f"(heatmap_nv={cfg.heatmap_nv}) ...")
     result = rh.run_representative_heatmaps(Nv, cfg, show_progress=True)

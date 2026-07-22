@@ -299,7 +299,7 @@ def representative_scatter_path(cfg: Config, Nv: int) -> str:
 
 
 def _case_slug(case_name: str) -> str:
-    """``"A: Nearly no disorder"`` -> ``"caseA"``."""
+    """``"A: Resonant baseline"`` -> ``"caseA"``."""
     letter = case_name.split(":")[0].strip()
     return f"case{letter}"
 
@@ -331,7 +331,7 @@ def save_representative_summary(representative: Dict[str, Dict], cfg: Config, Nv
     filter-based cases) whether that filter was actually satisfied.
 
     Written identically by both ``--representative`` and
-    ``--representative-heatmap`` (each calls this once its Case A-K selections
+    ``--representative-heatmap`` (each calls this once its Case A-H selections
     are known), so either workflow produces the same consolidated
     case-conditions file at ``representative_summary_Nv{Nv}_sigma{sigma}.csv``.
     ``score``/``filter_satisfied`` are written blank if a caller's per-case

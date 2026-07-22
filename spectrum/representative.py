@@ -10,7 +10,7 @@ physics. Two passes, kept deliberately memory-light:
   lightweight per-realization metadata -- ``(index, eps1, eps2, delta1,
   delta2)`` -- for every realization. No per-realization spectra are stored.
 * **Selection**: from that metadata cloud, automatically pick one realization
-  closest to each of several physically meaningful targets (Cases A-G).
+  closest to each of several physically meaningful targets (Cases A-H).
 * **Pass 2** ( :func:`recompute_representative_spectra` ): rebuild the static
   Hamiltonian once (as the existing sigma-sweep code already does) and
   recompute a full spectrum only for the handful of *selected* realizations --
@@ -90,28 +90,43 @@ def collect_realization_metadata(
 
 
 # ---------------------------------------------------------------------------
-# Automatic selection of representative realizations (Cases A-K)
+# Automatic selection of representative realizations (Cases A-H)
 #
 # Selection is done by PHYSICAL CRITERIA on each realization's *actual* drawn
 # site energies (eps1, eps2), never by "nearest to an invented target
 # coordinate". Each case is either
 #
 #   * a pure ranking  (argmin/argmax of a physically motivated score), or
-#   * a hard boolean filter  (e.g. "both above resonance") followed by a
+#   * a hard boolean filter  (e.g. "opposite-sign disorder") followed by a
 #     ranking *within* the realizations that pass the filter.
 #
-# The 11 cases are processed in order A -> K. A shared ``used_indices`` set
+# RESONANCE REFERENCE. A molecule is cavity-resonant when its *bright vibronic
+# transition* equals omega_c. Because omega_c was tuned to the clean bright peak
+# (eps0=cfg.eps -> bright ~ omega_c; verified: at eps_i=7.0 the bright line is
+# 6.85=omega_c), that condition is eps_i ~= eps0, NOT eps_i ~= omega_c. Every
+# criterion below is therefore written in the signed detuning-from-resonance
+#   d_i = eps_i - eps0                    (c.d1, c.d2)
+# and the disorder scale is compared to the per-molecule coupling g = cfg.g.
+# (``wc``/``det1``/``det2`` remain in _Ctx for reference and plotting but are
+# deliberately NOT used by the cases -- comparing eps_i to omega_c would be off
+# by the ~0.15 eV vibronic offset.)
+#
+# The set spans two orthogonal axes: the common-mode shift s=(d1+d2)/2 (both
+# molecules move together; cases A/E/F/H) and the inter-molecular mismatch
+# |eps1-eps2|=|d1-d2| (cases B/C/D/G) -- so each case probes a distinct region.
+#
+# The 8 cases are processed in order A -> H. A shared ``used_indices`` set
 # guarantees every case selects a *distinct* realization: each case takes the
 # best-scoring realization that has not already been claimed. If a case's
 # boolean filter admits no (unused) realization -- possible for a finite
-# sample, e.g. "both below resonance" when disorder is weak -- we fall back to
-# ranking over all still-unused realizations and flag ``filter_satisfied`` so
-# the fallback is visible rather than silent.
+# sample when disorder is weak -- we fall back to ranking over all still-unused
+# realizations and flag ``filter_satisfied`` so the fallback is visible rather
+# than silent.
 #
 # Physical constants used (all derived from cfg, none invented):
-#   eps0    = cfg.eps      clean transition (bare-molecule) energy
-#   wc      = cfg.omega_c  cavity photon (resonance) energy
-#   g       = cfg.g        per-molecule matter-cavity coupling
+#   eps0    = cfg.eps      clean transition energy == cavity-resonance point
+#   wc      = cfg.omega_c  cavity photon energy (legacy; not used by the cases)
+#   g       = cfg.g        per-molecule matter-cavity coupling (the disorder ruler)
 #   Omega   = cfg.Omega    collective light-matter coupling scale
 # ---------------------------------------------------------------------------
 @dataclass
@@ -119,10 +134,10 @@ class _Ctx:
     """Vectorized realization quantities + physical constants for scoring."""
     eps1: np.ndarray      # drawn site energy, molecule 1
     eps2: np.ndarray      # drawn site energy, molecule 2
-    d1: np.ndarray        # eps1 - eps0 (deviation from clean energy)
+    d1: np.ndarray        # eps1 - eps0 (signed detuning from resonance)
     d2: np.ndarray        # eps2 - eps0
-    det1: np.ndarray      # |eps1 - wc|  (detuning of molecule 1 from the cavity)
-    det2: np.ndarray      # |eps2 - wc|
+    det1: np.ndarray      # |eps1 - wc|  (legacy cavity-energy detuning; unused by cases)
+    det2: np.ndarray      # |eps2 - wc|  (legacy cavity-energy detuning; unused by cases)
     gap: np.ndarray       # |eps1 - eps2|  (inter-molecular energy mismatch)
     eps0: float
     wc: float
@@ -148,78 +163,79 @@ class CaseSpec:
 
 
 def build_cases() -> List[CaseSpec]:
-    """The 11 physical cases A-K (see module docstring for the selection rules)."""
+    """The 8 physical cases A-H (see module docstring for the selection rules).
+
+    Resonance is referenced to the clean transition energy ``eps0 = cfg.eps``
+    (NOT to ``cfg.omega_c``): a molecule is cavity-resonant when its bright
+    vibronic transition equals ``omega_c``, which happens when ``eps_i ~= eps0``
+    -- the clean value -- because ``omega_c`` was tuned to the clean bright peak.
+    Every criterion below is therefore written in the signed detuning-from-
+    resonance ``d_i = eps_i - eps0`` (``c.d1`` / ``c.d2``), and the disorder
+    scale is always compared to the per-molecule coupling ``g = cfg.g``.
+
+    The set spans two orthogonal axes -- the common-mode shift
+    ``s = (d1 + d2)/2`` (both molecules move together) and the inter-molecular
+    mismatch ``|eps1 - eps2| = |d1 - d2|`` (``c.gap``) -- so each case probes a
+    distinct region of the disorder plane.
+    """
     return [
-        # A -- Nearly no disorder: both molecules sit at the clean energy.
-        #      Minimize the radial deviation sqrt(d1^2 + d2^2).
-        CaseSpec("A", "Nearly no disorder",
-                 "eps1 ~ eps and eps2 ~ eps (smallest overall disorder)",
+        # A -- Resonant baseline (no disorder): both molecules at eps0, so both
+        #      sit on cavity resonance. Minimize the radial deviation
+        #      sqrt(d1^2 + d2^2). Reference realization; maximal collective cascade.
+        CaseSpec("A", "Resonant baseline",
+                 "eps1 ~ eps and eps2 ~ eps: both on cavity resonance (no disorder)",
                  "min", lambda c: np.hypot(c.d1, c.d2)),
 
-        # B -- Both molecules resonant: both detunings from the cavity small.
-        #      Minimize distance of (eps1, eps2) to (wc, wc), which drives BOTH
-        #      |eps1 - wc| and |eps2 - wc| down together.
-        CaseSpec("B", "Both molecules resonant",
-                 "both |eps1 - wc| and |eps2 - wc| minimized (near cavity resonance)",
-                 "min", lambda c: np.hypot(c.det1, c.det2)),
-
-        # C -- Molecule 1 resonant: |eps1 - wc| small while |eps2 - wc| large.
-        #      Minimize det1 - det2 (small det1, large det2).
-        CaseSpec("C", "Molecule 1 resonant",
-                 "|eps1 - wc| small while |eps2 - wc| as large as possible",
-                 "min", lambda c: c.det1 - c.det2),
-
-        # D -- Molecule 2 resonant: reverse of C.
-        CaseSpec("D", "Molecule 2 resonant",
-                 "|eps2 - wc| small while |eps1 - wc| as large as possible",
-                 "min", lambda c: c.det2 - c.det1),
-
-        # E -- Both above resonance: hard requirement eps1 > wc AND eps2 > wc.
-        #      Among those, pick the one sitting most clearly above (maximize
-        #      the smaller of the two margins above wc).
-        CaseSpec("E", "Both above resonance",
-                 "eps1 > wc and eps2 > wc",
-                 "max", lambda c: np.minimum(c.eps1 - c.wc, c.eps2 - c.wc),
-                 mask=lambda c: (c.eps1 > c.wc) & (c.eps2 > c.wc)),
-
-        # F -- Both below resonance: hard requirement eps1 < wc AND eps2 < wc.
-        #      Maximize the smaller margin below wc (both comfortably below).
-        CaseSpec("F", "Both below resonance",
-                 "eps1 < wc and eps2 < wc",
-                 "max", lambda c: np.minimum(c.wc - c.eps1, c.wc - c.eps2),
-                 mask=lambda c: (c.eps1 < c.wc) & (c.eps2 < c.wc)),
-
-        # G -- Opposite disorder: molecules deviate in opposite directions from
-        #      the clean energy, (d1)(d2) < 0. Maximize |eps1 - eps2|.
-        CaseSpec("G", "Opposite disorder",
-                 "(eps1 - eps)(eps2 - eps) < 0, maximizing |eps1 - eps2|",
-                 "max", lambda c: c.gap,
-                 mask=lambda c: (c.d1 * c.d2) < 0),
-
-        # H -- Very large disorder (bare-molecule limit): both molecules far
-        #      from the cavity, |eps_i - wc| >> g. Maximize min(det1, det2) --
-        #      the honest finite-sample "furthest both-detuned" realization.
-        CaseSpec("H", "Very large disorder (bare-molecule limit)",
-                 "both |eps_i - wc| >> g (both molecules far off-resonance)",
-                 "max", lambda c: np.minimum(c.det1, c.det2)),
-
-        # I -- Resonance mismatch: inter-molecular gap comparable to the
-        #      coupling, |eps1 - eps2| ~ g -- the collective-to-localized
+        # B -- Mismatch ~ coupling (crossover): inter-molecular gap comparable to
+        #      the coupling, |eps1 - eps2| ~ g -- the collective-to-localized
         #      crossover. Minimize | |eps1 - eps2| - g |.
-        CaseSpec("I", "Resonance mismatch (crossover)",
+        CaseSpec("B", "Mismatch ~ coupling",
                  "|eps1 - eps2| ~ g (collective-to-localized crossover)",
                  "min", lambda c: np.abs(c.gap - c.g)),
 
-        # J -- Nearly degenerate molecules: minimize |eps1 - eps2| (they may
-        #      both be shifted far from resonance, but track each other).
-        CaseSpec("J", "Nearly degenerate molecules",
-                 "|eps1 - eps2| minimized (molecules nearly degenerate)",
-                 "min", lambda c: c.gap),
+        # C -- Large mismatch / localized: a large SAME-SIGN gap, i.e. one
+        #      molecule near resonance and the other far detuned on the same side
+        #      -- the excitation localizes on the less-detuned molecule.
+        CaseSpec("C", "Large mismatch (localized)",
+                 "|eps1 - eps2| >> g, same sign: excitation localizes on one molecule",
+                 "max", lambda c: c.gap,
+                 mask=lambda c: (c.d1 * c.d2) > 0),
 
-        # K -- Maximum energy mismatch: strongest symmetry breaking.
-        CaseSpec("K", "Maximum energy mismatch",
-                 "|eps1 - eps2| maximized (strongest symmetry breaking)",
-                 "max", lambda c: c.gap),
+        # D -- Opposite disorder (anti-correlated): d1 and d2 have opposite signs
+        #      (net shift s ~ 0). Maximize the smaller |d_i| so BOTH molecules sit
+        #      as far as possible from resonance, in opposite directions.
+        CaseSpec("D", "Opposite disorder",
+                 "(eps1 - eps)(eps2 - eps) < 0: molecules detuned oppositely (s ~ 0)",
+                 "max", lambda c: np.minimum(np.abs(c.d1), np.abs(c.d2)),
+                 mask=lambda c: (c.d1 * c.d2) < 0),
+
+        # E -- Common blue detuning (matched): both molecules ~ +g above
+        #      resonance, staying matched. Minimize distance to (d1, d2) = (g, g).
+        CaseSpec("E", "Common blue detuning",
+                 "eps1 ~ eps2 ~ eps + g: both blue-detuned together (symmetry intact)",
+                 "min", lambda c: np.hypot(c.d1 - c.g, c.d2 - c.g)),
+
+        # F -- Common red detuning (matched): both molecules ~ -g below
+        #      resonance. Minimize distance to (d1, d2) = (-g, -g).
+        CaseSpec("F", "Common red detuning",
+                 "eps1 ~ eps2 ~ eps - g: both red-detuned together (symmetry intact)",
+                 "min", lambda c: np.hypot(c.d1 + c.g, c.d2 + c.g)),
+
+        # G -- Single-molecule resonant (asymmetric): one molecule on resonance
+        #      (d ~ 0) while the other is detuned by at least ~ g. Minimize the
+        #      smaller |d_i|, requiring the larger to exceed g.
+        CaseSpec("G", "Single-molecule resonant",
+                 "one molecule on resonance while the other is detuned by >~ g",
+                 "min", lambda c: np.minimum(np.abs(c.d1), np.abs(c.d2)),
+                 mask=lambda c: np.maximum(np.abs(c.d1), np.abs(c.d2)) > c.g),
+
+        # H -- Bare-molecule limit: both molecules far off-resonance on the SAME
+        #      side, |eps_i - eps0| >> g -- both decouple from the cavity (no
+        #      polariton). Maximize the smaller |d_i| among same-sign pairs.
+        CaseSpec("H", "Bare-molecule limit",
+                 "both |eps_i - eps| >> g, same sign: both decouple from the cavity",
+                 "max", lambda c: np.minimum(np.abs(c.d1), np.abs(c.d2)),
+                 mask=lambda c: (c.d1 * c.d2) > 0),
     ]
 
 
@@ -239,7 +255,7 @@ def _build_ctx(metadata: List[RealizationMetadata], cfg: Config) -> _Ctx:
 def select_representative_realizations(
     metadata: List[RealizationMetadata], cfg: Config, sigma: Optional[float] = None
 ) -> Dict[str, Dict]:
-    """Select one *distinct* realization for each physical case A-K.
+    """Select one *distinct* realization for each physical case A-H.
 
     Cases are evaluated in order; a shared ``used_indices`` set enforces
     uniqueness (each case claims the best-scoring realization not yet taken).
@@ -362,7 +378,7 @@ def recompute_representative_spectra(
 ) -> Dict[str, Dict]:
     """Build the static Hamiltonian once and reuse it for every selected case.
 
-    Only the (typically 7) *selected* representative realizations are
+    Only the (typically 8) *selected* representative realizations are
     recomputed here -- never the full disorder ensemble -- keeping Pass 2's
     memory and compute footprint independent of ``cfg.n_realizations``.
     """
@@ -408,7 +424,7 @@ def assemble_representative_spectra(
     normalizing with the ensemble's reference constants -- **no re-diagonalization
     at all**. This is bit-identical (to float round-off in the broadening
     summation) to :func:`recompute_representative_spectra`, but skips the
-    (typically 11) expensive ``eigh`` calls entirely.
+    (typically 8) expensive ``eigh`` calls entirely.
 
     Falls back to a one-shot recompute for any case whose realization index is
     out of range for the stored arrays (should not happen when ``average`` came
