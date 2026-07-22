@@ -85,6 +85,20 @@ class Config:
     representative_nv: int = 12          # Nv used for this analysis
     representative_n_realizations: int = 300  # realizations sampled for the (eps1,eps2) cloud
 
+    # ---------------- Representative P(v) heatmaps (analysis) ----------------
+    # Drive a *separate*, additive analysis workflow (--representative-heatmap):
+    # for each physically selected representative realization (Cases A-K, same
+    # selection as --representative), build the single-molecule vibronic basis,
+    # form the two-molecule + cavity (polaritonic) Hamiltonian in that basis,
+    # diagonalize it, and plot the paper's discrete Fig. S1 heatmap of the
+    # single-molecule sector population P(v) of the bright polaritonic states.
+    # These fields are read only by spectrum/{vibronic,polariton,participation,
+    # representative_heatmap}.py and NEVER by the frozen absorption pipeline
+    # (basis/operators/hamiltonian/spectrum.py), which is left untouched.
+    heatmap_nv: int = 12                 # vibrational Fock cutoff for the vibronic basis
+    heatmap_bright_threshold: float = 1.0e-2  # bright = intensity > threshold * max
+    heatmap_which_molecule: str = "avg"  # "1", "2", or "avg" (paper's symmetric quantity)
+
     # ---------------- Paths ----------------
     results_dir: str = "results"
     # "Without disorder" reference curve. Columns: E, I (0 and 1). Plotted on top

@@ -108,6 +108,18 @@ def parse_args():
                         "cloud (default: config representative_n_realizations).")
     p.add_argument("--repr-sigma", type=float, default=None,
                    help="Disorder strength sigma for this analysis (default: config.sigma).")
+    # ---- P(v) heatmaps for the selected representatives (paper Fig. S1) ----
+    p.add_argument("--representative-heatmap", action="store_true",
+                   help="For each physically selected representative realization "
+                        "(Cases A-K, same selection as --representative), build the "
+                        "vibronic->polaritonic Hamiltonian and plot the paper's "
+                        "discrete Fig. S1 P(v) heatmap. Uses only the (eps1,eps2) "
+                        "selection (no absorption disorder average), so it does just "
+                        "one polaritonic diagonalization per case. Frozen absorption "
+                        "pipeline untouched.")
+    p.add_argument("--heatmap-nv", type=int, default=None,
+                   help="Vibrational Fock cutoff for the heatmap vibronic basis "
+                        "(default: config heatmap_nv=12).")
     return p.parse_args()
 
 
@@ -278,6 +290,57 @@ def run_representative(args, cfg: Config) -> None:
     print(f"\nDone. All outputs in {cfg.results_dir}/")
 
 
+def run_representative_heatmap(args, cfg: Config) -> None:
+    """P(v) heatmaps (paper Fig. S1) for the selected representative realizations.
+
+    Standalone and cheap: the Case A-K selection needs only the drawn
+    ``(eps1, eps2)`` cloud, so this does NOT run the absorption disorder average
+    -- just one polaritonic diagonalization per selected case (parallelizable via
+    --workers). The frozen absorption pipeline is not touched.
+    """
+    # Deferred imports: keep this analysis's modules off the default path.
+    from spectrum import representative_heatmap as rh
+
+    Nv = args.nv[0] if args.nv else cfg.representative_nv
+    cfg.n_realizations = (
+        args.repr_realizations if args.repr_realizations is not None
+        else cfg.representative_n_realizations
+    )
+    if args.repr_sigma is not None:
+        cfg.sigma = args.repr_sigma
+    if args.heatmap_nv is not None:
+        cfg.heatmap_nv = args.heatmap_nv
+
+    # One diagonalization per selected case (typically 11). Auto-parallelize
+    # across processes unless the user pinned --workers.
+    if cfg.n_workers is None:
+        usable = max(1, (os.cpu_count() or 1) - 2)
+        cfg.n_workers = max(1, min(usable, 11))
+        if cfg.n_workers > 1:
+            print(f"[repr-heatmap] auto-parallelizing over {cfg.n_workers} "
+                  f"worker processes (override with --workers N).")
+
+    ensure_results_dir(cfg)
+
+    print(f"[repr-heatmap] selecting Cases A-K (Nv={Nv}, sigma={cfg.sigma:g}, "
+          f"{cfg.n_realizations} realizations) and building P(v) heatmaps "
+          f"(heatmap_nv={cfg.heatmap_nv}) ...")
+    result = rh.run_representative_heatmaps(Nv, cfg, show_progress=True)
+
+    header = f"{'Case':<32}{'Idx':>6}{'eps1':>10}{'eps2':>10}{'#bright':>9}"
+    print(f"\n{header}")
+    print("-" * len(header))
+    for name, entry in result["heatmaps"].items():
+        n_bright = entry["heatmap"].shape[1]
+        print(f"{name:<32}{entry['realization_index']:>6}{entry['eps1']:>10.4f}"
+              f"{entry['eps2']:>10.4f}{n_bright:>9}")
+        rh.save_representative_heatmap(entry, cfg, Nv)
+        out_path = rh.representative_heatmap_path(cfg, Nv, entry["case"])
+        rh.plot_representative_heatmap(entry, cfg, out_path, show=not args.no_show)
+
+    print(f"\nDone. All heatmaps in {cfg.results_dir}/")
+
+
 def main():
     args = parse_args()
 
@@ -291,6 +354,10 @@ def main():
     if args.workers is not None:
         cfg.n_workers = args.workers
     apply_reference_args(args, cfg)
+
+    if args.representative_heatmap:
+        run_representative_heatmap(args, cfg)
+        return
 
     if args.representative:
         run_representative(args, cfg)

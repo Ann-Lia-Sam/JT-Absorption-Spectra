@@ -17,6 +17,7 @@ into a reusable, resumable, progress-tracked command-line tool.
 - [Quick start](#quick-start)
 - [Command-line usage](#command-line-usage)
 - [Representative disorder realizations (analysis)](#representative-disorder-realizations-analysis)
+- [Representative P(v) heatmaps (paper Fig. S1)](#representative-pv-heatmaps-paper-fig-s1)
 - [Configuration](#configuration)
 - [Output files](#output-files)
 - [How it works](#how-it-works)
@@ -87,15 +88,21 @@ Summer-Internship-2026/
 │   ├── spectrum.py         # disorder averaging + Lorentzian broadening
 │   ├── storage.py          # per-Nv save/load (.npz + .dat), resume logic
 │   ├── plotting.py         # overlay all spectra (+ optional reference curve) + representative plots
-│   └── representative.py  # representative-disorder-realization analysis (Pass 1 + Pass 2)
+│   ├── representative.py   # representative-disorder-realization analysis (Pass 1 + Pass 2)
+│   ├── vibronic.py         # single-molecule Jahn-Teller vibronic basis (for the P(v) heatmap)
+│   ├── polariton.py        # two-molecule + cavity Hamiltonian in the vibronic basis + solve
+│   ├── participation.py    # P(v) sector populations, participation ratio, Fig. S1 assembly
+│   └── representative_heatmap.py  # P(v) Fig. S1 heatmaps for the selected representatives
 ├── tests/
-│   └── test_representative.py  # RNG-stream match, Pass-2 exactness, spectrum-unchanged pin
+│   ├── test_representative.py          # RNG-stream match, Pass-2 exactness, spectrum-unchanged pin
+│   └── test_representative_heatmap.py  # vibronic route == frozen absorption evals/intensities; sum_v P(v)=1
 └── results/                # created at runtime
     ├── spectrum_Nv2.npz    # full result per Nv (arrays + provenance)
     ├── spectrum_Nv2.dat    # portable two-column text (E, intensity)
     ├── overlay_spectra.png # final overlaid figure
     ├── representative_scatter_Nv12_sigma0.24.png
-    └── representative_spectrum_Nv12_sigma0.24_case{A..G}.png
+    ├── representative_spectrum_Nv12_sigma0.24_case{A..K}.png
+    └── representative_heatmap_Nv12_sigma0.24_case{A..K}.png
 ```
 
 ---
@@ -255,27 +262,35 @@ Two memory-light passes:
    metadata (`index`, `eps1`, `eps2`, `delta1 = eps1 - eps`, `delta2 = eps2 - eps`) by
    replaying the *same* RNG stream (same seed, same draw order) the pipeline uses
    internally. No individual spectra are stored.
-2. **Automatic selection** — from that `(eps1, eps2)` cloud, pick the realization
-   closest to each of 7 physically meaningful targets:
+2. **Automatic selection by physical criteria** — from that `(eps1, eps2)` cloud, pick,
+   for each of 11 physically meaningful cases, the realization that best satisfies its
+   criterion on the *actual* drawn energies (an argmin/argmax, or a hard filter followed
+   by a ranking). Cases are processed in order with a shared `used_indices` set so every
+   case selects a **distinct** realization. Here `ωc` is the cavity energy and
+   `g = Ω/(2√N)` the per-molecule coupling:
 
-   | Case | Meaning |
-   |------|---------|
-   | A | Nearly no disorder (`eps1 ≈ eps`, `eps2 ≈ eps`) |
-   | B | Molecule 1 resonant with the cavity, molecule 2 far detuned |
-   | C | Reverse of B |
-   | D | Large *opposite* disorder (`eps1 = eps+δ`, `eps2 = eps-δ`, large `\|δ\|`) |
-   | E | Both shifted upward |
-   | F | Both shifted downward |
-   | G | Large disorder — realization nearest the *edge* of the sampled cloud (farthest from center, not closest to a point) |
+   | Case | Criterion |
+   |------|-----------|
+   | A | Nearly no disorder — minimize √(δ1² + δ2²) (`eps1 ≈ eps`, `eps2 ≈ eps`) |
+   | B | Both molecules resonant — minimize both `\|eps1 − ωc\|` and `\|eps2 − ωc\|` |
+   | C | Molecule 1 resonant — `\|eps1 − ωc\|` small while `\|eps2 − ωc\|` is as large as possible |
+   | D | Molecule 2 resonant — reverse of C |
+   | E | Both above resonance — `eps1 > ωc` and `eps2 > ωc` |
+   | F | Both below resonance — `eps1 < ωc` and `eps2 < ωc` |
+   | G | Opposite disorder — `(eps1 − eps)(eps2 − eps) < 0`, maximizing `\|eps1 − eps2\|` |
+   | H | Very large disorder (bare-molecule limit) — both `\|eps_i − ωc\| ≫ g` |
+   | I | Resonance mismatch (crossover) — `\|eps1 − eps2\| ≈ g` |
+   | J | Nearly degenerate molecules — minimize `\|eps1 − eps2\|` |
+   | K | Maximum energy mismatch — maximize `\|eps1 − eps2\|` |
 
 3. **Pass 2** — build the static Hamiltonian **once** (as the sigma-sweep code already
-   does) and recompute a full spectrum only for those ~7 selected realizations, reusing
+   does) and recompute a full spectrum only for those ~11 selected realizations, reusing
    the same Hamiltonian/diagonalization/broadening/normalization building blocks as the
    main pipeline — so Pass 2's cost and memory footprint never scale with
    `n_realizations`.
 
 ```bash
-# 300 realizations at Nv=12 (defaults), scatter + 7 case plots + summary table
+# 300 realizations at Nv=12 (defaults), scatter + 11 case plots + summary table
 venv/bin/python main.py --representative
 
 # Custom Nv / realization count / disorder strength, headless
@@ -289,9 +304,73 @@ venv/bin/python main.py --representative --nv 8 --repr-realizations 500 --repr-s
 | `--repr-sigma S`        | Disorder strength for this analysis (default: `Config.sigma`).      |
 
 Outputs (in `results/`): `representative_metadata_Nv{N}_sigma{σ}.csv` (all sampled
-realizations), `representative_summary_Nv{N}_sigma{σ}.csv` (the 7-case table),
+realizations), `representative_summary_Nv{N}_sigma{σ}.csv` (the case table),
 `representative_scatter_Nv{N}_sigma{σ}.png`, and one
 `representative_spectrum_Nv{N}_sigma{σ}_case{X}.{png,npz,dat}` per case.
+
+---
+
+## Representative P(v) heatmaps (paper Fig. S1)
+
+A further **separate, additive** analysis layer (`--representative-heatmap`) reproduces
+the paper's **Fig. S1** — a heatmap of the single-molecule vibronic-sector population
+`P(v)` of the bright polaritonic states — for each physically selected representative
+realization (**Cases A–K**, the same selection as `--representative`). The frozen
+absorption-spectrum modules (`basis.py`, `operators.py`, `hamiltonian.py`,
+`spectrum.py`) are left **completely untouched**; the P(v) machinery lives in new
+modules (`vibronic.py`, `polariton.py`, `participation.py`, `representative_heatmap.py`)
+and is validated to reproduce the absorption eigenvalues/intensities to ~1e-9
+([`tests/test_representative_heatmap.py`](tests/test_representative_heatmap.py)).
+
+### What it computes
+
+Following the Supplementary Material, for each selected realization's `(eps1, eps2)`:
+
+1. **Single-molecule vibronic basis** — diagonalize each molecule's Jahn–Teller
+   Hamiltonian to get its vibronic eigenstates, each labelled by a vibronic
+   angular-momentum sector `v = 2(n+ − n−) + Sz`. This is done **once** at `eps_k = 0`;
+   every molecule/realization reuses it via an O(1) rigid eigenvalue shift (the
+   eigenvectors are disorder-independent — only the excited-state eigenvalues shift).
+2. **Polaritonic Hamiltonian** — build the two-molecule + cavity Hamiltonian in that
+   vibronic basis (the `(nex=1, j=−1)` sector) and diagonalize it → polaritonic
+   eigenstates.
+3. **P(v)** — for each **bright** polaritonic state (absorption intensity above
+   `heatmap_bright_threshold` × the brightest), sum the probability over all basis
+   states in which a molecule occupies sector `v`. For every eigenstate `Σ_v P(v) = 1`,
+   and the participation ratio is `PR = 1 / Σ_v P(v)²`.
+
+Each plot is the discrete Fig. S1: **x = bright polaritonic states (energy-ordered)**,
+**y = vibronic sector `v`**, **color = P(v)**.
+
+### Cost
+
+This does **one** polaritonic diagonalization per selected case (~11), **not** the full
+disorder average — the Case A–K selection needs only the drawn `(eps1, eps2)` cloud (an
+RNG replay), so no absorption disorder loop runs here. With `--workers` the ~11 solves
+run in roughly one parallel round. (The single-molecule step above is essentially free;
+see [performance notes](#performance-notes).)
+
+```bash
+# P(v) heatmaps for all 11 cases at Nv=12 (defaults), parallel, headless
+venv/bin/python main.py --representative-heatmap --nv 12 \
+    --repr-realizations 100 --repr-sigma 0.024 --workers 12 --no-show
+```
+
+| Flag                       | Description                                                        |
+|----------------------------|--------------------------------------------------------------------|
+| `--representative-heatmap` | Run this analysis (instead of the Nv sweep / `--representative`).   |
+| `--heatmap-nv N`           | Vibrational Fock cutoff for the vibronic basis (default `Config.heatmap_nv`, `12`). |
+| `--repr-realizations N`    | Realizations sampled for the `(eps1, eps2)` cloud used for selection. |
+| `--repr-sigma S`           | Disorder strength for this analysis (default: `Config.sigma`).      |
+| `--workers N`              | Parallelize the per-case diagonalizations across `N` processes.     |
+
+Outputs (in `results/`): one
+`representative_heatmap_Nv{N}_sigma{σ}_case{X}.{png,npz}` per case `X` in `A..K`.
+
+> **`--representative` and `--representative-heatmap` are separate steps.** The former
+> produces the representative absorption *spectra*; the latter the P(v) *heatmaps*. Run
+> both if you want both — running only `--representative` will **not** create any
+> heatmaps.
 
 ---
 
@@ -324,6 +403,11 @@ dataclass. Edit the defaults there, or override the common ones from the command
 | `sigma_list`       | `[0,0.01,0.03,0.05,0.08]` | Default disorder strengths for the sigma sweep |
 | `realization_sweep_nv` | `12`       | `Nv` used by `--realization-sweep` when `--nv` is omitted |
 | `realization_list` | `[10,50,100,200]` | Default realization counts for the realization sweep |
+| `representative_nv` | `12`          | `Nv` used by `--representative` / `--representative-heatmap` |
+| `representative_n_realizations` | `300` | Realizations sampled for the `(eps1, eps2)` cloud |
+| `heatmap_nv`       | `12`           | Vibrational Fock cutoff for the P(v) heatmap vibronic basis |
+| `heatmap_bright_threshold` | `1e-2` | A polariton state is "bright" if its intensity exceeds this × the brightest |
+| `heatmap_which_molecule` | `"avg"`  | Which molecule's `P(v)` to plot: `"1"`, `"2"`, or `"avg"` (paper's symmetric quantity) |
 | `results_dir`      | `"results"`    | Output directory                                   |
 | `reference_file`   | `None`         | Optional "without disorder" curve (see below)      |
 
@@ -373,6 +457,14 @@ The **realization sweep** writes files tagged by `Nv`, `sigma`, and count:
 - `results/spectrum_Nv{Nv}_sigma{sigma}_real{n}.npz` and `.dat` — one per count.
 - `results/overlay_realizations_Nv{Nv}_sigma{sigma}.png` — spectra for that `Nv`
   overlaid, one curve per realization count.
+
+The **representative P(v) heatmap** (`--representative-heatmap`) writes one pair of
+files per case `X` in `A..K`:
+
+- `results/representative_heatmap_Nv{Nv}_sigma{sigma}_case{X}.png` — the Fig. S1 heatmap.
+- `results/representative_heatmap_Nv{Nv}_sigma{sigma}_case{X}.npz` — its arrays
+  (`grid`, `energies`, `intensity`, `heatmap`, `pr`) plus provenance and the case's
+  `(eps1, eps2)`.
 
 Loading a saved result in your own script:
 
