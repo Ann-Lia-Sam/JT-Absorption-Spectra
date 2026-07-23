@@ -151,7 +151,7 @@ def test_pass2_reuse_matches_recompute():
     """The fast Pass-2 path (reuse Pass-1 eigendata) must match the explicit
     re-diagonalization path to float round-off, for every normalization mode."""
     Nv = 4
-    for norm in ("none", "reference", "reference_area", "area"):
+    for norm in ("none", "reference", "reference_area", "area", "peak"):
         cfg = Config()
         cfg.NORMALIZATION = norm
         cfg.n_realizations = 8

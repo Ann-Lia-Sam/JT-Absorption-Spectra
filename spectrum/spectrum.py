@@ -27,7 +27,7 @@ def lorentzian(x, x0, gamma):
     return (1 / np.pi) * (0.5 * gamma) / ((x - x0) ** 2 + (0.5 * gamma) ** 2)
 
 
-VALID_NORMALIZATIONS = ("reference", "reference_area", "area", "none")
+VALID_NORMALIZATIONS = ("reference", "reference_area", "area", "peak", "none")
 
 
 def _check_normalization(cfg: Config) -> None:
@@ -59,6 +59,10 @@ def _normalize_spectrum(
       a different summary statistic taken from it.
     * ``"area"`` -- divide this spectrum by its own trapezoidal integral over
       ``E``, so ``∫I(E)dE = 1``.
+    * ``"peak"`` -- divide this spectrum by its own maximum, so it peaks at 1.
+      Unlike ``"reference"`` (a single shared σ=0 peak), every curve is scaled
+      by its *own* peak, so each one peaks at exactly 1 and only the lineshape
+      -- not the disorder-driven peak reduction -- is compared.
     * ``"none"`` -- return the spectrum unchanged.
     """
     mode = cfg.NORMALIZATION
@@ -74,6 +78,11 @@ def _normalize_spectrum(
         area = np.trapezoid(spectrum, E)
         if area != 0:
             return spectrum / area
+        return spectrum
+    if mode == "peak":
+        peak = spectrum.max()
+        if peak > 0:
+            return spectrum / peak
         return spectrum
     if mode == "none":
         return spectrum

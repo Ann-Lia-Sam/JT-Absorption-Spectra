@@ -37,6 +37,7 @@ from tqdm import tqdm
 from spectrum.config import Config
 from spectrum.plotting import overlay, overlay_realizations, overlay_sigma
 from spectrum.spectrum import (
+    VALID_NORMALIZATIONS,
     compute_spectrum_for_Nv,
     compute_spectrum_realization_sweep,
     compute_spectrum_sigma_sweep,
@@ -77,6 +78,13 @@ def parse_args():
                    help="Run disorder realizations across this many processes "
                         "(default: serial). >1 enables parallelism; each worker is "
                         "pinned to one BLAS thread. Results match the serial run.")
+    p.add_argument("--normalization", choices=VALID_NORMALIZATIONS, default=None,
+                   help="Normalization applied to each final spectrum (default: config "
+                        "NORMALIZATION='reference'). Applies to every mode, including "
+                        "--representative. 'reference'/'reference_area': divide by the "
+                        "σ=0 spectrum's peak/area (one shared scale). 'area': divide by "
+                        "the spectrum's own integral. 'peak': divide by the spectrum's "
+                        "own maximum, so each curve peaks at 1. 'none': leave unchanged.")
     # ---- sigma-sweep mode (fixed Nv, multiple disorder strengths) ----
     p.add_argument("--sigma-sweep", action="store_true",
                    help="Sweep disorder strength sigma for a single Nv instead of "
@@ -357,6 +365,8 @@ def main():
         cfg.results_dir = args.results_dir
     if args.workers is not None:
         cfg.n_workers = args.workers
+    if args.normalization is not None:
+        cfg.NORMALIZATION = args.normalization
     apply_reference_args(args, cfg)
 
     if args.representative_heatmap:

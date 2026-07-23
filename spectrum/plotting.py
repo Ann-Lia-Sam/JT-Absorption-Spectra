@@ -20,7 +20,7 @@ def _plot_reference(ax, cfg: Config) -> None:
         return
     data = np.loadtxt(ref, comments="#")
     E_ref, I_ref = data[:, 0], data[:, 1]
-    if cfg.NORMALIZATION == "reference":
+    if cfg.NORMALIZATION in ("reference", "peak"):
         if I_ref.max() > 0:
             I_ref = I_ref / I_ref.max()
     elif cfg.NORMALIZATION in ("area", "reference_area"):

@@ -35,6 +35,10 @@ class Config:
     #   summary statistic taken from it).
     # "area"           -- divide the final averaged spectrum by its own
     #   integral (trapezoidal over E), so that ∫I(E)dE = 1.
+    # "peak"           -- divide the final averaged spectrum by its own maximum,
+    #   so it peaks at 1. Unlike "reference" (one shared σ=0 peak for the whole
+    #   sweep), every spectrum is scaled by its *own* peak, so each curve peaks
+    #   at exactly 1 and only the lineshape is compared.
     # "none"           -- leave the averaged spectrum unchanged.
     NORMALIZATION: str = "reference"
 
