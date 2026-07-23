@@ -1,0 +1,708 @@
+Speaker B: Open the door.
+
+Speaker C: There it is. You got up.
+
+Speaker D: I also do this.
+
+Speaker E: You ready for session? Go, go and wash your face, come back. It's mostly experimental view point of, let's say, cinema. Yes, but this is all of a sudden surprise for me. I mean, one vendor came all of a sudden two years ago and asked me to look into it. I found it really amazing. I mean, it's the bridge between basic and the very advanced. It introduces all the concepts. Such books are rare. That's why. But I don't follow any of these books. I only read them. I have a book called Peter Batnath. Yes, I follow usually that book. Because it is a very, very well organized textbook for us. That is this one.
+
+Speaker D: I see.
+
+Speaker E: Very well organized, very neatly written all. So, you do not worry about the space, you see. You see, I mean, the L vector, L square, L z, and he explains it very, I mean, quite well. I really like this. Some super good problems. I have to organize all this, all that is in between.
+
+Speaker C: Thanks.
+
+Speaker D: Yeah, there's workshops. Yeah, yeah. So you can all come.
+
+Speaker B: So, this is my— I had the quotient disorder. So, now I am plotting x-axis as epsilon 1 and y-axis as epsilon 2, so that I can choose some representative epsilon 1 and epsilon 2 and see the plots of that. So, इंडिविजुअली सो दिस आर सम ऑफ़ द केसेस आई टॉक आई विल एक्सप्लेन व्हाट दिस केसेस आर सो द फर्स्ट वन हाँ द फर्स्ट वन इज़ बोथ द एप्सिलन वन एंड एप्सिलन टू आर वेरी क्लोज तू सेवन इट्सेल्फ लाइक यू कैन सी ए इस दिस इज़ सेवन सेवन सो दिस इज़ क्लोज टू ए इट्सेल्फ एंड इट इज़ म It is very similar to what we got in the paper, like without disorder. I have that also.
+
+Speaker E: Yeah. But two molecules. But we have to make this side. It looks yeah, I know that is true.
+
+Speaker D: I see. So, these okay. Can you make it? Can you make the brightness?
+
+Speaker B: I think.
+
+Speaker D: Oh, now it's better. I see.
+
+Speaker E: Okay.
+
+Speaker A: Number of bright states decreases.
+
+Speaker B: No, it slightly decreases. I have the exact values.
+
+Speaker A: There are forty-one bright states, but in this 30, but in this case without disorder 41 bytes, but in this case 37 or 38.
+
+Speaker E: Are you comparing with and without disorder?
+
+Speaker C: Yes, yes.
+
+Speaker B: Here 39 are there, 39.
+
+Speaker E: How strong is the disorder?
+
+Speaker B: Disorder is we are choosing epsilon 1 as 6.984, epsilon 2 is 7. So, like we are for now we are not looking at this disorder strength sigma value, because I am choosing 1 epsilon and 1 epsilon 2. So, now we are not looking at that.
+
+Speaker D: Now, so this is one particular value, what does that sigma mean that should I should not?
+
+Speaker B: That is like when we were disorder averaging, we were choosing a disorder strength. So, this is sigma I chose and I am choosing some points from those.
+
+Speaker D: So, this is where you are very close and it looks very similar.
+
+Speaker B: It is, it is resemble. So, here it is 42, right, and this is 39.
+
+Speaker D: And this is, this n equal to 18 case is from your code or from which?
+
+Speaker B: It is my code.
+
+Speaker D: It is your code. This is reduction is because of basis or because of disorder?
+
+Speaker B: I think I have that for twelve.
+
+Speaker D: It is also important.
+
+Speaker C: Yeah, yeah.
+
+Speaker E: She anyway got the converges by pull, I guess.
+
+Speaker C: So, right.
+
+Speaker B: Here. Oh, it is this point.
+
+Speaker E: But once you have to—
+
+Speaker B: I don't know what that is.
+
+Speaker E: Or any basis functions you choose, whether it is n equal to 18 or 20 or 22. If you have achieved the other test by 15, that is right.
+
+Speaker B: It does not matter.
+
+Speaker C: This is for 12.
+
+Speaker D: So, okay, fine. All right. So, then you go. And can we see the spectrum?
+
+Speaker B: Yeah.
+
+Speaker C: Okay. So, okay.
+
+Speaker B: Ha! This is A, and the next condition. I actually plotted one more condition, which is B, but it was very similar to one of the other cases. So I am not looking at it right now. Now is C. C is like. we are basically— wait a minute, before that I think I will go to some of the major plot like points where it is showing some interesting results. So, that I will go to f. And now, it is both epsilon 1 and epsilon 2 are redshifted. हाँ राइट ओके ए वाज़ बोथ आर स्लाइटी ब्लू शिफ्टेड या ओके वेट व्हाट सर ए इस लाइक बोथ आर स्लाइटी ब्लू शिफ्टेड नो नो नो इट्स नॉट ब्लू शिफ्टेड हाँ दिस आर यू लुकिंग एट दिस लाइन आह आई शुडन't लुक एट इट्स कैविटी रेसोनेंस ओह आई सी आई सी ओके फाइन दिस इज़ ओमेगा सीज़ ए ही एनर्जी गैप इलेक्ट्रॉनिक एनर्जी गैप, but सी स्टेकिंग एक्सल। या या डेट आई अंडरस्टूड। अंडरस्टेड। दिस इज़ द रेडशिफ्टेड वन। हाँ। सो व्हाट वी आर सीइंग इज़, as we said in the previous meeting, there is a shift to the left side, and then this LP is actually hybridizing with some other vibronic levels near to it. That's what we are seeing here. And I think the upper polariton is a big peak, and like there is no like this fragmentation or anything, maybe because here the—
+
+Speaker D: so this case F is both are equally redshifted?
+
+Speaker B: Yes, equally redshifted.
+
+Speaker D: And A was both are almost on resonance?
+
+Speaker B: Yes.
+
+Speaker C: Fine, okay.
+
+Speaker B: So here the near the upper polariton, the vibronic levels are not that dense as that of lower polaritons. So, here as we are shifting it, some of the vibronic levels can hybridize with this lower polariton state. So—
+
+Speaker E: Okay.
+
+Speaker B: That is maybe that might be the reason that we are seeing a fragmentation here and here it is not possible and this is the participation ratio.
+
+Speaker D: Here, I see.
+
+Speaker B: I'll I have the exact values like one zero four. Hi, it is one zero four.
+
+Speaker A: The total bright ion states is one zero four.
+
+Speaker B: One zero four.
+
+Speaker D: Much larger.
+
+Speaker B: Yes.
+
+Speaker D: Because of mixing from the dark states.
+
+Speaker E: Yes. Can you just explain me that plot with dots and x y axis?
+
+Speaker B: Oh oh okay.
+
+Speaker E: I did not get that.
+
+Speaker B: Okay, so initially what we had was a Gaussian disorder. So, we choose a sigma which is a standard deviation. So, if I am choosing something like 0.48, here I am choosing 0.48, it means the epsilon can go from -0.48 to +0.48.
+
+Speaker A: Okay.
+
+Speaker B: So, here I am choosing that sigma and I choose some हंड्रेड रैंडम नंबर्स फ्रॉम बिटवीन दिस माइनस पॉइंट फॉर इट एंड प्लस पॉइंट फॉर इट एंड हियर आई प्लॉटेड ऑन एक्स एक्सिस एप्सिलॉन वन एंड एप्सिलॉन टू ओके ओके और नाउ आई एम चुजिंग सम रिप्रेजेंटेटिव पॉइंट्स फ्रॉम दिस आई एम सीइंग द इंडिविजुअल स्पेक्ट्रा ऑफ़ ईच ऑफ़ दोस This dashed line, this dotted line is my cavity resonance.
+
+Speaker E: Ah, okay, okay.
+
+Speaker B: Six point eight five.
+
+Speaker E: Yeah, yeah, that is true.
+
+Speaker D: Okay, this is approximately A is the point where you are you have no disorder approximately.
+
+Speaker E: So since this is at higher energy, so you call it blue shifted. A point A is not blue shifted.
+
+Speaker B: It is resonant. I think this dotted line is what is making the confusion here.
+
+Speaker A: Dotted line is cavity resonance six point eight five.
+
+Speaker D: Yeah, you should Forget the dotted line. Think of the origin as A.
+
+Speaker E: Origin as A. Okay.
+
+Speaker D: A is the nominal seven eV energy for both molecules, and blue shifted, red shifted is with respect to that seven eV energy.
+
+Speaker C: Yes.
+
+Speaker E: But what about the point that is below that G? What? How do you see it? So it is epsilon one just below 7, and epsilon 2.
+
+Speaker D: So, G is molecule 1 is almost on resonance, but molecule 2 is well below resonance, or not— I should not say resonance, well below its nominal value of 7.
+
+Speaker E: So, you perform calculations for these points, highlighted points, right?
+
+Speaker C: Yes.
+
+Speaker B: This is the participation rate, the heat map.
+
+Speaker D: So, now you are accessing a wider set of states.
+
+Speaker B: Yes.
+
+Speaker D: And these states can of course show these cascade effects, and you are seeing that over here.
+
+Speaker E: What would be interesting is to see how disorder obstructs this cascade effect by increasing its strength.
+
+Speaker B: Oh yes, that we can see later. Yeah, for some of the other points.
+
+Speaker C: I see.
+
+Speaker D: So, can you show the spectrum associated with this plot? So, the lower polariton states, the ones with the index closer to 0, are the ones that form the lower branch. And those, if you go back to that plot, the participation ratio plot, Can you go back to that part of the presentation? For the lower polariton, it is still kind of low. The number of sectors is still— with the upper polariton, we have—
+
+Speaker E: What were you explaining for the lower polariton peaks in the red?
+
+Speaker B: This one? So, near the lower polariton, The vibronic levels are denser than that of the upper polariton.
+
+Speaker E: We have hardly 8 to 9 peaks, and then the low polariton, the cavity molecule is present with the second peak of, let us say, second peak of the vibronic spectrum. spectrum, right. So, how do you then say that you have more dense white body levels in the lower part of the spectrum? You hardly have one above it, one below it, or if the cavity assumes certain width depending on the coupling strength, you would access few, let us say, away from this peak. I do not, I do not get this point.
+
+Speaker A: Me and Yeah, for epsilon one is six point six seven four. So in without disorder, I kept both the molecule epsilon should be six point six seven four. I got exactly same spectrum. Red color.
+
+Speaker E: That's true. So what does it say?
+
+Speaker A: So it seems.
+
+Speaker E: What does it say? Here, you take red one. No, no, no, it will not go away. It is etched.
+
+Speaker D: My board is in a similar situation.
+
+Speaker E: It is fine. We understood.
+
+Speaker A: So, Earlier, our epsilon is seven electron volt, and we and our cavity frequency is six point eight five. Now we are this for this epsilon we got this maximum intensity.
+
+Speaker E: Ah, okay. Okay, fine, fine. The vibratory spectrum.
+
+Speaker A: Ah, vibratory spectrum. So when we change the epsilon, let's say seven to six 6.85, yeah. What is this?
+
+Speaker E: 6.674, 674, and lower than this one. You get somewhere else.
+
+Speaker A: So, this one will reduce.
+
+Speaker E: Ah, you get somewhere else. Okay, fine. That's what I understand.
+
+Speaker A: Less than this one.
+
+Speaker E: Fine.
+
+Speaker A: So, our case is deviating in the cavity.
+
+Speaker E: Yeah. Okay.
+
+Speaker A: So, a spectrum. So, a spectrum is looks like. So, more more in the lower polar atom side.
+
+Speaker E: But the electronic spectrum still remains the same, right? Even if you have this energy shift.
+
+Speaker A: But shift according to the energy gap, na?
+
+Speaker E: Yeah.
+
+Speaker A: The spectrum is same. Yeah. But this sigma decides where it will shift. Number of lines will be the same.
+
+Speaker B: What I understand is. the vibronic levels, the energy gap between the vibronic levels stays intact. But when we change this epsilon, it decides where to shift.
+
+Speaker E: Yes.
+
+Speaker B: So, when for this epsilon it is shifting to the left.
+
+Speaker C: Yeah.
+
+Speaker B: So, it can get in resonance with the this lower polarity.
+
+Speaker E: So, you are kind of bringing more vibronic states.
+
+Speaker C: Yes.
+
+Speaker E: I see.
+
+Speaker B: So, they— there is hybridization.
+
+Speaker E: But you are fixing the cavity molecular orbitals at 6.8.
+
+Speaker A: Yes.
+
+Speaker E: Okay, you are bringing some more vibronic states towards left.
+
+Speaker A: Yes.
+
+Speaker E: In the new F2.
+
+Speaker A: Now 6.85 is closer to the upper polarity.
+
+Speaker E: Yeah, I got that point. So, what that like साइड और नाउ यू हैव एट्रोस प्रीवियसली योर पीक है समवे हीरे 6.85 राइट यू हैव तो दिस काइंड ऑफ स्पेक्ट्रम राइट नाउ दे काइंड ऑफ चॉइस एट डिफरेंट दिस इज़ फॉर एप्सिलॉन इक्वल टू 7.0 राइट नाउ दे चॉइस ए डिफरेंट एप्सिलॉन व्हिच इज़ अराउंड 6.0 व्हाट दैट 6.74 6.74 व Yeah, okay, they chose. So, now they kind of got a vibronic spectrum which is the same, but shifted to the left side.
+
+Speaker D: Vibronic spectrum.
+
+Speaker E: Vibronic spectrum. So, in other words, they kept this resonance the same. So, you got 3, 2 more peaks this side. So, the cavity could potentially, potentially can encompass, I mean, can span these states close to, let us say, You have 1 or 2 more peaks extra coming close to 6.85.
+
+Speaker D: I do not see any peaks near 6.85.
+
+Speaker E: In the pair spectrum, in the pair spectrum, in the pair vibronic spectrum.
+
+Speaker D: Yeah, yes.
+
+Speaker E: That they are kind of interpreting. Now, the cavity could be hybridizing with more vibronic peaks close to 6.85 than it was when I see. That is equal to 7.0. Is this kind of? Is this is this the thing that you have proved, or you are just offering an explanation without based on your intuition?
+
+Speaker B: It's mostly an intuition. I haven't really proved it or anything.
+
+Speaker D: Maybe if we see more. I mean, the other cases we will get some more unified picture, just to see what happens with other cases.
+
+Speaker A: Can you show that one spectra mimic with the one molecule polariton?
+
+Speaker E: Yeah.
+
+Speaker A: So, last time—
+
+Speaker D: Where is this in the scatter plot?
+
+Speaker B: C, this is C. So one epsilon is heavily shifted, so it is almost decoupled. The other is near resonance.
+
+Speaker D: Then you should expect something similar to the one molecule spectrum.
+
+Speaker C: Yes.
+
+Speaker A: So we have I have checked. So red color.
+
+Speaker B: Red color.
+
+Speaker A: Red. See only three peaks are there. So as you suggest, we can do. स्क्वायर टू, सो आई हैव ट्राइड एक्जेक्टली आई कॉट दिस वन। हाँ, दिस इज़ द, आई हैव टेकन द वन मॉलिक्यूल एंड देन डिवाइडेड इट बाय रूट टू। तो दैट इज़ द ग्रीन वन। यस, ग्रीन वन। सो यू, बट यू सेड इट मैचेस एक्जेक्टली। हाँ। एनर्जीज़ दिस वन ना? First, we keep this energy 7.078, and cavity frequency is 6.85 divided by into omega divided by root 2.
+
+Speaker D: So, so here you are not in your green spectrum, you are you are not shifting your epsilon 2 to be 7.078 or this?
+
+Speaker B: ग्रीन कलर। ग्रीन कलर। हम्म। I kept the epsilon same as seven itself, and then for that cavity molecule Hamiltonian, I divided it by root two, g by root two.
+
+Speaker D: हाँ हाँ। I see.
+
+Speaker B: And then overlaid it.
+
+Speaker A: And the second case, I have checked kept epsilon h eight electron electron volt, and cavity frequency is six point eight five. And coupling strength is 0.05.
+
+Speaker D: It should mostly be flat.
+
+Speaker A: Flat, only 2 peaks are coming. One peak is this one, another is nearby this side.
+
+Speaker D: Right.
+
+Speaker E: What are these 3 plots? I mean, one with C— okay, one with red is with serialization.
+
+Speaker B: Yes.
+
+Speaker E: One molecule with G also reduced Rabi splitting.
+
+Speaker C: Yes.
+
+Speaker E: One molecule with G also.
+
+Speaker B: Yeah.
+
+Speaker E: Is it G by square root of 2?
+
+Speaker B: G by square root of 2.
+
+Speaker E: And in 2 molecules when there is no disorder, that was our spectrum, right? Yes. The previous spectrum. Yes. The dotted lines was our paper spectrum. So, what do you want to see from here? Why did you do this?
+
+Speaker B: This was— this simply says that the one molecule is actually getting fully decoupled, this 8.082 epsilon, and the only the other molecule is getting coupled to the cavity.
+
+Speaker E: So, it is like one—
+
+Speaker B: and that is why that might be the reason why the peaks are very similar to the one molecule divided by root 2 case.
+
+Speaker E: The intensities are different.
+
+Speaker B: Actually, there is a small issue. I normalized these two in two different ways. Yeah, I was actually running it when you came. I noticed it later.
+
+Speaker E: Fine, fine. Okay, so is that all that you would like to show? I've seen one flat.
+
+Speaker B: Yeah, what is this?
+
+Speaker D: Is that K C? K C is the absence of cascade. or no significant cascade.
+
+Speaker E: When you have disorder, but—
+
+Speaker D: One molecule is basically decoupled. So, it is basically what happens with one molecule, and then you do not see, I mean, the progression you think.
+
+Speaker E: Yeah, very nice, I would say, supporting result to the spectrum, right.
+
+Speaker C: Right.
+
+Speaker B: Yeah, there are only 11.
+
+Speaker E: It confirms it.
+
+Speaker B: 11 bright states here.
+
+Speaker E: Likewise, whether we get the same thing when you increase the disorder to, let us say, much larger value, that is of interest to—
+
+Speaker D: So, can you show that scatter plot again? I just want to see what are the other points you have. So, I would guess that for B also, B must be similar to C. Yes, right.
+
+Speaker B: That is why I removed it. E is actually blue, blue detuned.
+
+Speaker E: So, that is because one molecule is above, I mean one epsilon is above the resonance and the other one is. B is actually B is actually B is B is off for both experiments.
+
+Speaker D: So now you see that the lower polariton is sharply peaked, yes, while the upper polariton is suppressed, yes. Whereas when you showed, can you go to the scatter plot again? You showed F, can you go back to F? F has the opposite effect, yes. This is because of the different ways in which the vibronic spectrum shifts.
+
+Speaker E: Yes.
+
+Speaker D: And because of which in one case the cavity becomes more on resonance with the lower vibronic polaritons, in the other case it hybridizes better with the upper vibronic polaritons, and therefore you see this. So, then there must be Some point on that line joining A and F when both the peaks are approximately equal, where one is— they are balanced.
+
+Speaker E: So, that gives you unified picture.
+
+Speaker C: Yeah.
+
+Speaker B: So, this is the heat map of that.
+
+Speaker D: So, here you again have only few polaritons.
+
+Speaker B: Yes. 14.
+
+Speaker D: It is 12. Yes, that is because it is the lower vibronic spectrum that is hybridizing.
+
+Speaker B: Yes.
+
+Speaker D: And then typically you get only a few peaks there. I do not know why, but that is what happens. In the F case, you had hundreds.
+
+Speaker C: Yes.
+
+Speaker D: Right.
+
+Speaker B: 104.
+
+Speaker D: That is because it is the upper polar return branch, and there you get many more.
+
+Speaker A: How can we say in part if participation ratio is high, the spectra will broaden?
+
+Speaker D: You cannot say.
+
+Speaker A: You cannot say.
+
+Speaker D: It is not directly, that is, yeah. So, there are 2 mechanisms. So, at best we can say that if the participation ratio is high, it is correlated with the broadening of the spectra.
+
+Speaker A: The sum of the spectra I have seen, Participation ratio is high, but the spectrum is not broad. Fine.
+
+Speaker D: High means what do you mean?
+
+Speaker A: Means here like more excess number of bionic sectors are accessible.
+
+Speaker E: But we also did not claim in our paper that because the participation ratio is higher, therefore the spectrum gets broadened. We did not climb that. I mean, the broadening is a result of, let us say, how the spectral lines come together, the polytonic peaks, I mean, the polytonic sticks come together, right. Let us say if you are having bunch of peaks close by, then you could define, I mean, you can say that you have broadening over that region.
+
+Speaker C: One second.
+
+Speaker A: Why are we getting more number of peaks in 5 or polar atoms? I do not know.
+
+Speaker D: That is a good question. I think we should try to understand what happens with before introducing the cavity. In the vibronic spectrum itself, there are two branches.
+
+Speaker A: Eight lines, eight or nine lines.
+
+Speaker D: Yeah, vibronic spectrum for that coupling. Eight or nine lines.
+
+Speaker A: We are coupled in the second number of lines. That is maximum intensity.
+
+Speaker C: Right, right, right.
+
+Speaker E: Yeah. Is that The broadening aspect, clear?
+
+Speaker A: That one, let us keep it. But my other question is, why in the upper polaritons more number of peaks than the lower polariton?
+
+Speaker E: The upper ordering branch, more number of peaks, states.
+
+Speaker A: Ah, yes.
+
+Speaker D: I don't know actually, it is a good question. Maybe there is some way to answer it at least numerically if we find out what is going on, then we can try to understand it.
+
+Speaker E: I mean starting from let us say single molecule in a cavity, you have equal number of peaks, right?
+
+Speaker A: More or less equal number of peaks.
+
+Speaker E: Now, when you put more molecules, Now we come with this collective electronic cascade, and then it tries to explain the number of peaks with the number of basis states participating in each of these, let us say, each of these levels. So, it so happens the upper polar atomic branch you have more states. It could be that, I mean, as you go up, because of the anharmonicity problem, you have kappa— no, you do not have perfect harmonic potentials. You have plus or minus kappa कबाक्यू, right? So that is that. So the potentials are anharmonic. They are not harmonic. The general potentials. That is the reason. As you go up in from the wells, I think the anharmonicity aspect should come from vibratory spectrum.
+
+Speaker C: Ah, you are right.
+
+Speaker E: The anharmonicity aspect. It could be the— but all the bright vibronic peaks are spaced more or less the same for me, correct?
+
+Speaker A: Almost same, we cannot say equally spaced.
+
+Speaker E: But you have also the dark vibronic states buried, which you do not access by this, you know, the ones that you do not see in the spectrum, they lie probably So, it is more— yeah, I can speak for 2 more minutes. These are the things that we never thought about.
+
+Speaker D: Yeah, but this— I mean, we do say in our paper that observable consequence of cascade is spectrum broadening. But now I am not entirely sure that statement is 100% accurate, because yes, cascade happens, broadening happens, and if the cascade happens, the chances of broadening are probably higher. But it is not necessary that cascade should happen. It is the only reason for a broadening. That is true.
+
+Speaker E: That is true, but I mean going back to this question, why the I mean how do I know that okay in this specific energy region you have more peaks coming up as compared to the other region and things like this participation ratios and things are necessary later like you can diagnose these peaks and then say that. Which basis states participate and things like that. But how do I? It's a numerical problem, right? I mean, is there any analytical solution that you can predict? Okay, these many peaks should come in this region.
+
+Speaker D: This many peaks.
+
+Speaker E: It will be diagonalized.
+
+Speaker A: Sir, in Felix problem case, is is there happen in upper polariton side more number of peaks are coming?
+
+Speaker D: I don't know.
+
+Speaker C: I mean.
+
+Speaker E: I am still trying to attribute it to, let us say, the inharmonicity associated with this polaritonic potential surfaces. When you now have— now you just imagine that instead of vibronic electronic surfaces, you have polaritonic potential surfaces. These are the eigenstates of these surfaces, vibrational eigenstates of these polaritonic surfaces, right. So, you would get more and more as you go up. That is all, that is what only I can see.
+
+Speaker C: I mean, live, because the potentials are actually—
+
+Speaker E: so they kind of— they are not harmonic, they go like linearly starting from the intersection point. it goes linearly like this, the other branch goes like this. So, as you go up, the energy levels have to come closer. That could be— what is then the source of, let us say, more peaks in the upper band?
+
+Speaker A: Near the well, See, in this case, in the upper polariton band, only 2 peaks are there.
+
+Speaker D: In this case, there are only 2 peaks there. So, most of the peaks are in the— 2 or 3 peaks, but that is not— I mean, what you should do really is go back to that participation ratio. प्लॉट कौन सा रेड कलर एनी एनी प्लॉट एनी वन ऑफ़ द कैन यू बोल मैं हाँ सो व्हाट यू शुड डू हियर इज़ यू शुड ऐड वन कर्व ऑन टॉप ऑफ़ दिस यूज़ द सेकंड वाई एक्सिस राइट यू हैव दिस अदर राइट साइड वाई एक्सिस राइट एंड ऐड अ कर्व ऑफ़ एनर्जी वर्सेस इंडेक्स ऑफ़ द स्टेट ओके सो a jump and you will see the upper. So, that we can identify which polar electronic state is in upper or lower branch. You see what I am saying, like a horizontal—
+
+Speaker B: Can you explain it?
+
+Speaker D: So, you can— you have energy ordered, right. So, then if I now at every index if I plot the energy, right, then I should see a strictly increasing function because it is ordered by energy. So, then at some point you should see some jump that says, okay, till up to 20 it is my lower polariton, after that it is my upper polariton. And to do that you can use the fact that you have a second y-axis on the right side which is being— which is unused at the moment, right. You can plot it with respect to that. That will give us in one plot we can see, right now I cannot tell whether The lower branch ends at 20 or 40. So he is saying there are 2 peaks, but maybe it is one broad peak with 20 eigenvectors. How do you know, right? So with very small sticks, so we do not know that.
+
+Speaker B: Yes.
+
+Speaker E: Can you just verify quickly that the vibronic states are equally spaced, both dark and bright? If you just look at the vibronic spectrum after diagonalizing your vibronic Hamiltonian, do you get, let us say, the energies that are equally spaced?
+
+Speaker A: Not equally spaced, I have checked.
+
+Speaker E: Just see, yeah, yeah. So, and then see whether the energy levels come Or close, close as you go up in energy, just above 7 electron volts here. How many energy levels? I think the anharmonicity should explain the number of levels in the upper valence band. Particularly when you have disorder, the dark states also start getting activated, right?
+
+Speaker B: Yes.
+
+Speaker E: So, that could—
+
+Speaker A: In dark disorder, how can we see dark states activated?
+
+Speaker E: ओह सीएस प्रूफ सीएस प्रूफ दैट नो बट डिसऑर्डर सी चेंज द एप्साइलन वैल्यू या है सो फॉर दैट एप्साइलन हाइब्रोनिक अस्पेक्ट वी कैन गो बैक टू हाइब्रोनिक एस्पेक्ट इनिशियली वी टुक सेवेन इलेक्ट्रॉन बोल्ड सो ब्राइटेस्ट पिक कमिंग तू बी 6.85 या है इफ़ वी चेंज तू सेवेन इलेक Fine, that is all fine, but I am saying that if you have 2 molecules and with disorder, when you add disorder term, the dark states in each, I mean from each of these molecules get now activated, they also part of this global disorder.
+
+Speaker D: They are no longer dark states.
+
+Speaker B: The older ones, the newer ones.
+
+Speaker E: You can see the coupling matrix elements that she was discussing the other day, she has typed it I guess, right.
+
+Speaker D: Can you go back to that scatter plot again? So, this f and e points are approximately on the line y equal to x.
+
+Speaker C: Yes.
+
+Speaker D: Right. So, then you will not activate the dark states. What— there is nothing special about 7 electron volt. If both the molecules have the same energy, then dark states remain approximately darker, and you will not activate them. And that is why probably these spectra look kind of similar to the spectra.
+
+Speaker E: Yeah, it makes sense. You have two new general monkeys with slightly different particularities.
+
+Speaker D: Yeah, so for example, D might look very different to D.
+
+Speaker B: So D is it's like opposite.
+
+Speaker D: Like the if delta one was some point one, delta two is much माइनस पॉइंट्स हैं सर, वैटेज। बट इट इस सो सो यहाँ व्हाट यू आर सीइंग आई थिंk इज़ दैट यू आर जस्ट सीइंग द कैविटी एट 6.5 सेकंड। या मेम्म् या ओके। नथिंग एट सेकंड इन दिस रेंज। हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम्म हम हाँ, 6.5. Yeah, that is basically saying that the molecules are in the ground state. The cavity is that's V zero sector, and inside that I think you will see it's in the ground state.
+
+Speaker E: Can you go to the cavity spectrum?
+
+Speaker A: The one thing we can.
+
+Speaker E: One second. So when you when you are putting cavity resonant with molecular spectrum, this is what you are actually hybridizing with the molecular spectrum. This peak, you know, it has certain width. Therefore, it tries to overlap with as many vibronic peaks that the width can span. That is how it forms, let us say.
+
+Speaker A: But this one, sir, it will get after the Lorentzian. We choose only the delta function peak.
+
+Speaker E: No, no, no, your vibronic peaks are delta functions, but it is like a laser pulse, no, with certain width.
+
+Speaker A: So, this—
+
+Speaker D: nobody is correct, like I mean, your cavity does not have a decay. So, then its energy is also fixed. The reason you see it broadened is artificially you have this Lorentzian broadening.
+
+Speaker E: But when we say that, let us say cavity can have certain— I mean, let us say when you are hybridizing one cavity peak with, let us say, 7 of these peaks, what are we doing? We are— it is supposed to then talk only one with one peak, right, not the rest of the peaks.
+
+Speaker D: No.
+
+Speaker E: It is like a very narrow band.
+
+Speaker D: No, but there is some interaction strength, right? That interaction strength is what determines what is the range of frequency.
+
+Speaker E: Yeah, it is not.
+
+Speaker A: It is not.
+
+Speaker D: The interaction strength will determine how much detuning are you allowed to suffer to still have reasonable coupling.
+
+Speaker E: Is there any qualitative formula for the interaction strength and the detuning?
+
+Speaker D: Like G by delta. The value of G by delta will tell you If G by delta is very small, such that—
+
+Speaker E: this delta P?
+
+Speaker D: Detuning between the carrier and the vibronic carrier.
+
+Speaker E: Yeah, yeah, yeah, okay.
+
+Speaker C: Yeah, yeah, that is true.
+
+Speaker E: Yeah, it is much like the coupling. Yeah, it is basically the coupling. Even if they are at different frequencies, the coupling can— if this coupling is strong enough, it can bring the resonancy. Yeah, that is true. Yeah, the simple 2 pendulum problems, right? When you have exact resonance, weak coupling can do the business. When you have these are very different, if you make the coupling strong, still they cannot be made to resonate. Yes, that is what is happening.
+
+Speaker D: Yeah, sort of.
+
+Speaker A: तीसरे इन पार्टिसिपेशन रेश्यो इन अपर पॉलरिटोन केस इज़ स्प्रेडिंग, मोर नंबर ऑफ़ सेक्टर्स आर पार्टिसिपेटिंग इन अपर पॉलरिटोन। हम्म। but in lower पॉलरिटोन only few सेक्टर्स आर पार्टिसिपेटिंग। so why?
+
+Speaker E: no but I have noticed in all the no that is that is not that because you do not need many basis functions to describe lower energy states as per Compared to the higher energy states, it's one numeric answer. I don't know physically what does it mean.
+
+Speaker A: Like in 102, 104, right states are there. There only lower polariton case up to 2 or 3 are there in a polariton spectrum.
+
+Speaker E: That is true. You need more base states to describe higher energy states. That is kind of general principle. But physically, how to how to monitor it? I don't know. Numerically, that's true. It's all about let's yeah, it's all about let's say for the low energy states, you need low vibrations, right? Quality basic states, I will say. For higher quality states, you would need higher.
+
+Speaker A: Why low sectors are few sectors are participated in in lower quality funds?
+
+Speaker D: If somebody will ask, do you have that single molecule micronics?
+
+Speaker E: स्पेक्ट्रम, यस, देर जीरो माइनस वन माइनस दी एनर्जी लेवल्स, एनर्जी लेवल्स, एनर्जी लेवल्स फ्रॉम द पेपर। सो वी आर एक्चुअली असाइनिंग द वाइब्रेंट सेक्टर्स फ्रॉम द बेसिस स्टेट्स पार्टिसिपेटिंग इन द आईएसटी फॉर्मेशन, राइट? So, low energy bases would probably correspond to only few over electronic sectors. That is how I see it. You would hardly be having base states with low energies; that means lower vibrational quantum numbers and things like this. They correspond to low electronic, lower electronic sectors. सेक्टर्स, क्योंकि योर डिस्ट्रिक्टल लोअर एनर्जी स्टेट्स, डेट वुड रिक्वायर नॉट मेनी कंट्रीब्यूशंस फ्रॉम। बट इफ यू मेक कॉपिंग स्टेट्स स्ट्रॉंगर, इट इज़ आल्सो लाइकली दैट द लोअर एनर्जी 0.1 यू आर सेइंग, 0.015 माइक्रोनिक, इफ यू जस्ट वाइब्रोनिक्स कंट्री यूनिफाइड वाइब्रोनिक्स कंट्री में यूसी वाइब्रोनिक्स कंट्री इट्स अ लोअर वाइब्रेशंस दैट डोमिनेट दी लोअर एनर्जी पीक्स दैट मींस दी लोअर फर्स्ट टू पीक्स एस यू गो अप इन एनर्जी यू वुड हैव मेनी ऑफ़ वाइब्रेशन बेसिस स्टेट्स पार्टिसिपेटिंग इन हीरिंग फिर न बेसिस फंक्शंस। इन द वाइब्रोनिक स्पेक्टर। या या वेदर इट्स वाइब्रोनिक और पॉलराटोनिक इट डज़ न मैटर। इट्स द कुपलिंग दैट आल्सो प्लेस द रोल टू इन्वॉल्व हाईर एन्जी बेसिस स्टेट्स। सो यू हैव द स्पेक्टर?
+
+Speaker B: यस आई हैव इट। डिस्टेंस ऑन द पेपर इस फाइव लाइटस How to illustrate these things to a toy model?
+
+Speaker E: I mean, apart from numerical things, okay, when you switch the parameters, you would see immediately whatever. But apart from that, physically motivated toy model, how to— how do we just पिगों नॉट दिस पेपर सिंगल सो मोर रीसेंट पेपर ओह तू ओके सुनो जस्ट थिंक अबाउट इट सम सिंपल पेंडुलम प्रॉब्लम्स टू पेंडुला विथ कुछ अलग सम कपलिंग्स एंड हाउ डू यू डिस्क्राइब इट से टू क्वांटम मैकेनिकल हार्मोनिक्स लाइक दिस वन प्ले विथ रेजोनेंस coupling within CE?
+
+Speaker D: So, maybe one way to see this is that if you want to involve— so, one question you asked is why is the lower polariton only using the lower few vibronic sectors. So, as you go to higher vibronic sectors, you can see that in the excited manifold you can see that the minimum energy, the lowest energy state is also increasing in energy, right. It is going like this, right. So, if you want the lowest energy polariton states, but you, you cannot involve them because they will raise the energy. That is one way to think about it, right.
+
+Speaker C: Yes.
+
+Speaker D: just from the spectrum, you can kind of anticipate that maybe— well, it is not the best argument, but sort of.
+
+Speaker A: Possible argument.
+
+Speaker D: Yes.
+
+Speaker E: Now, if you, if you just try to calculate the expectation value, let us say, let us, let us think that we from diagonalization got the energy, and then now try to get, let us say, the expectation value of the energy of this polariton using certain basis combination of certain basis only, you would find that the best possible combination is the one with lowest vibrational vibrations participating in it. So, that is how the diagonalization problem works out.
+
+Speaker D: Then you should also remember one more thing, what you call as the polariton spectrum are only those polaritons which have overlap with the a00 state, because that is what you are using to measure whether it counts as a polariton state or not. There can be polariton states that have no support on a00, maybe they have support on a11, right. Now, if I plot a polariton spectrum by defining the spectrum as overlap with a11, I might see more states.
+
+Speaker E: More states.
+
+Speaker D: So, to some extent this definition of polariton spectrum is physically motivated that you start in the ground state, but after that it is arbitrary.
+
+Speaker E: It is simply the dipole spectrum, just 1 photon.
+
+Speaker D: Yeah, you starting from the ground state.
+
+Speaker E: Absolute ground state of the system. So, yeah.
+
+Speaker D: So, in real— realistically this disorder how big can it be if the bare splitting is 7 electron volts? Is how big can a disorder be?
+
+Speaker E: It is only relative, you know, with respect to the cavity molecular strength. We make it ten times what is cavity molecular strength. Nothing to do with I mean that may correspond to some critical shifts which we would have to see. You assess the disorder strength with respect to cavity molecular strength.
+
+Speaker D: That is correct. It has to be done with respect.
+
+Speaker E: You take a disorder that is 10 times higher than, let us say, cavity volume G by omega c, and then see whether the ionic cascade persists for a best possible combination of excitons.
+
+Speaker D: So, right now, maybe if you go back to that scatter plot, right, what determines the width of the Gaussian that you chose to make the scatter plot in either direction? Like you have a width here and a width here. What determines the width of the Gaussian in either direction for making the scatter plot?
+
+Speaker B: It is sigma.
+
+Speaker D: I know, how did you— what is your basis for choosing that sigma?
+
+Speaker B: Like how I chose that sigma? I basically— I was comparing with cavity coupling. So, I thought I will take a larger value of disorder strength than that. So, I took the double of it.
+
+Speaker D: Cavity coupling is 0.24.
+
+Speaker C: Yes.
+
+Speaker D: So, that is why you chose this as the signal.
+
+Speaker C: Yes.
+
+Speaker D: So, that is a good justification, right. So, that is what I need.
+
+Speaker B: If it is small, it will—
+
+Speaker D: you are getting all the discussion and all the spectra will look kind of similar. Okay. So, yeah. So, what do you know so far? The स्पेक्ट्रम एट सी लुक्स हैज सम रेजेम्बलेंस तू सिंगल मॉलिक्यूल केस। यस। द स्पेक्ट्रम एट ई एंड फ आर लाइक मिरर इमेजेस ऑफ़ एक्चुअरी इन सम वे, करेक्ट?
+
+Speaker B: यस। द स्पेक्ट्रम एट डी इज़ सिमिलर तू सी। इट्स नॉट इट्स नॉट एक्चुअली सिमिलर तू सी, इट्स एक्चुअली सिमिलर तू ई। आई हैव इट Which? Dot dot dot. Dot dot dot.
+
+Speaker A: Wait, you are saying B is similar to C?
+
+Speaker B: Like my results was showing that B is similar to E.
+
+Speaker D: What then? What does E look like?
+
+Speaker B: This blue returning, the mirror image of F somewhere.
+
+Speaker D: Sorry, then scatter plot again. I thought that was A.
+
+Speaker E: Ah, no, no, no, no, no.
+
+Speaker D: Oh, you are saying B is similar to E.
+
+Speaker B: E, yeah.
+
+Speaker D: Yeah, I mean, you can argue like maybe it is 2, Close.
+
+Speaker B: Yeah, I think something like that.
+
+Speaker C: This is B.
+
+Speaker D: Yeah, written this way.
+
+Speaker C: B. And he looks like I see.
+
+Speaker B: And I am not—
+
+Speaker D: It will be interesting if you go to— go back to the scatter plot. So, you went to D, right. Do not go all— so, there is a line joining A to D, right. A is the origin. So, there is a line joining A to D, go along that line and maybe pick a point closer, maybe just that, maybe the one right next to it, that one, that might be an interesting point. I feel, because one molecule is higher, one molecule is lower roughly. by equal amounts. So, then the question is what does the cavity decide to do? I mean, ideally both should be favored in some interesting way.
+
+Speaker C: Okay.
+
+Speaker D: Right. So, yeah, we will see what happens there.
+
+Speaker B: There is one thing I do not understand. I also— I did not show G. So, this normalization has some issues, but I tried to overlay it with that single molecule, but it is not— the Rabi splitting is not the same, it is different.
+
+Speaker D: No, right here it would not be like that, because G is not the same as go back to the scatter plot, I keep forgetting the arguments. G is not the same as C. G would be the same as C if you went further down this line and picked that point. You see, the point is C is— C simplifies because one molecule is on resonance, the other is very far away from resonance. But G is not like that.
+
+Speaker B: Yes, yes.
+
+Speaker D: G is one molecule in resonance, the other is quite close to resonance.
+
+Speaker A: Yes.
+
+Speaker D: So, G is different than C, it cannot be the same.
+
+Speaker B: Yeah, and this has the highest number of polar atomic states, it is coming up to 132, I think. Yeah, 132.
+
+Speaker D: I see, I would expect something similar for that point between A and B, like many polar atomic states. states.
+
+Speaker C: Interesting. Yeah, it is just—
+
+Speaker D: yeah, the thing is we do not know which is in which branch. So, you need to do that energy overlay, the energy plot on all of this, so that we can say this is LP, that is UP.
+
+Speaker B: I do not know if this is interesting or not, but this difference between this epsilon epsilon 1 and epsilon 2 is almost close to this cavity coupling in this case.
+
+Speaker C: That—
+
+Speaker D: what that means is that both of them are kind of close to resonance with the cavity because they are within the strength of the coupling. So, g by delta is of order 1 is what you are saying. Whenever g by delta is of order 1, you can expect somewhat strong interaction. That is why this is different from C, where one of the G by deltas is much less than 1. Delta is huge for all of the molecules. So, we will stop here. I think it will be useful if you Include the energy thing, and then I think you will gain more insight if you correlate these participation ratios with whether they are in the LP or UP.
+
+Speaker C: This is something.
+
+Speaker A: I thought something hit my palate.
+
+Speaker D: All right, good, nice work. So you have another one week.
+
+Speaker B: Yes.
+
+Speaker D: Okay.
+
+Speaker B: I'll be on 31st.
+
+Speaker D: 31st.
+
+Speaker C: Thank you, sir.
+
+Speaker D: You lock it.
+

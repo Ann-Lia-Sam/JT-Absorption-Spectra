@@ -91,7 +91,7 @@ class Config:
 
     # ---------------- Representative P(v) heatmaps (analysis) ----------------
     # Drive a *separate*, additive analysis workflow (--representative-heatmap):
-    # for each physically selected representative realization (Cases A-H, same
+    # for each physically selected representative realization (Cases A-I, same
     # selection as --representative), build the single-molecule vibronic basis,
     # form the two-molecule + cavity (polaritonic) Hamiltonian in that basis,
     # diagonalize it, and plot the paper's discrete Fig. S1 heatmap of the

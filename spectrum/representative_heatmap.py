@@ -2,7 +2,7 @@
 
 This is a *separate, additive* analysis layer (Option A). It reuses:
 
-* the physically-motivated Case A-H selection from
+* the physically-motivated Case A-I selection from
   :mod:`spectrum.representative` (which needs only each realization's drawn
   ``(eps1, eps2)`` -- no absorption diagonalization at all), and
 * the paper's vibronic -> polaritonic machinery
@@ -11,7 +11,7 @@ This is a *separate, additive* analysis layer (Option A). It reuses:
   discrete Fig. S1 heatmap of the single-molecule vibronic-sector population
   ``P(v)`` of the bright polaritonic states.
 
-For each of the (typically 8) selected realizations we do exactly **one**
+For each of the (typically 9) selected realizations we do exactly **one**
 polaritonic diagonalization. The single-molecule Jahn-Teller basis is
 diagonalized **once** (at ``eps_k = 0``) and reused for every molecule and every
 realization via :func:`spectrum.vibronic.shift_reference` (an O(1) rigid
@@ -191,7 +191,7 @@ def compute_representative_heatmaps(
 def run_representative_heatmaps(
     Nv: int, cfg: Config, show_progress: bool = True
 ) -> Dict:
-    """Full standalone workflow: select Cases A-H, then heatmap each.
+    """Full standalone workflow: select Cases A-I, then heatmap each.
 
     Selection uses only the drawn ``(eps1, eps2)`` cloud (RNG replay via
     :func:`spectrum.representative.collect_realization_metadata`), so this does
@@ -216,12 +216,22 @@ def _crop_v_range(grid: np.ndarray, heatmap: np.ndarray, floor: float = 1e-4):
 
 
 def plot_representative_heatmap(
-    entry: Dict, cfg: Config, out_path: str, show: bool = True
+    entry: Dict, cfg: Config, out_path: str, show: bool = True,
+    show_energy_axis: bool = False,
 ) -> str:
     """Plot one representative's Fig. S1 heatmap: P(v) vs bright polariton state.
 
     y-axis = vibronic sector ``v``; x-axis = bright polaritonic states ordered by
     increasing energy; color = ``P(v)`` -- exactly the paper's Fig. S1 layout.
+
+    ``show_energy_axis`` (raised in the group meeting: "add one curve on top of
+    this, use the second y-axis ... a curve of energy versus index of the
+    state") adds a second y-axis on the right showing each bright state's raw
+    energy against the same x = bright-state-index used by the heatmap. Energy
+    is strictly increasing (states are already energy-ordered), so a visible
+    jump/plateau in that curve marks where the lower-polariton branch ends and
+    the upper-polariton branch begins -- resolving which heatmap columns belong
+    to which branch without guessing from the spectrum alone.
     """
     import matplotlib
     if not show:
@@ -247,6 +257,15 @@ def plot_representative_heatmap(
     )
     vlo, vhi = _crop_v_range(grid, heatmap)
     ax.set_ylim(vlo - 0.5, vhi + 0.5)
+
+    if show_energy_axis and n_bright > 0:
+        energies = entry["energies"]
+        ax2 = ax.twinx()
+        ax2.plot(x, energies, color="white", linewidth=1.5, zorder=3)
+        ax2.plot(x, energies, "o", color="crimson", markersize=3, zorder=4)
+        ax2.set_ylabel("Energy (eV)", color="crimson")
+        ax2.tick_params(axis="y", colors="crimson")
+
     fig.tight_layout()
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     if show:

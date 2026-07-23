@@ -7,7 +7,7 @@ The heatmap layer is validated against the *frozen* absorption pipeline:
   that the absorption pipeline would produce -- i.e. the heatmap is built from
   the same physics, just in the vibronic basis.
 * ``sum_v P(v) = 1`` for every polaritonic eigenstate.
-* The standalone workflow selects the same Cases A-H and produces a valid
+* The standalone workflow selects the same Cases A-I and produces a valid
   discrete Fig. S1 heatmap per case.
 
 Nothing here modifies the absorption-spectrum pipeline.
@@ -85,8 +85,8 @@ def test_end_to_end_representative_heatmaps():
     cfg.sigma = 0.24
     result = rh.run_representative_heatmaps(3, cfg, show_progress=False)
 
-    # 8 physical cases A-H, each with a valid heatmap.
-    assert set(e["letter"] for e in result["heatmaps"].values()) == set("ABCDEFGH")
+    # 9 physical cases A-I, each with a valid heatmap.
+    assert set(e["letter"] for e in result["heatmaps"].values()) == set("ABCDEFGHI")
     for name, entry in result["heatmaps"].items():
         assert entry["case"] == name
         hm = entry["heatmap"]

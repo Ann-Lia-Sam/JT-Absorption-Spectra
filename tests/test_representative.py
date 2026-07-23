@@ -86,12 +86,12 @@ def test_case_selection_sanity():
     metadata = rep.collect_realization_metadata(cfg, sigma=0.3, n_real=500)
     selections = rep.select_representative_realizations(metadata, cfg, sigma=0.3)
 
-    # All 8 physical cases A-H selected.
-    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGH")
+    # All 9 physical cases A-I selected.
+    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGHI")
 
     # Every case claims a distinct realization (used_indices uniqueness).
     chosen = [s["metadata"].index for s in selections.values()]
-    assert len(chosen) == len(set(chosen)) == 8
+    assert len(chosen) == len(set(chosen)) == 9
 
     eps1 = np.array([m.eps1 for m in metadata])
     eps2 = np.array([m.eps2 for m in metadata])
@@ -146,6 +146,26 @@ def test_case_selection_sanity():
         assert d1[iH] * d2[iH] > 0
     assert min(abs(d1[iH]), abs(d2[iH])) > g
 
+    # I -- A-D line, closest to omega_c: on the D-ward branch (eps1 < eps < eps2,
+    # i.e. d1 < 0 < d2 -- the same opposite-disorder side as D), the interior
+    # point nearest the omega_c line, scored by |d1+d2| + min(|eps_i - wc|).
+    wc = cfg.omega_c
+    det1 = np.abs(eps1 - wc)
+    det2 = np.abs(eps2 - wc)
+    score_I = np.abs(d1 + d2) + np.minimum(det1, det2)
+    iI = idx_of("I")
+    if filt_of("I"):
+        assert d1[iI] < 0 and d2[iI] > 0
+
+    # It must be the best-scoring (min) realization among those still unused and
+    # passing the D-ward mask at the point case I is evaluated.
+    chosen_indices = set(chosen)
+    rest_eligible = [
+        i for i in range(len(metadata))
+        if i not in chosen_indices and ((d1[i] < 0 and d2[i] > 0) or not filt_of("I"))
+    ]
+    assert score_I[iI] <= min(score_I[i] for i in rest_eligible) + 1e-12
+
 
 def test_pass2_reuse_matches_recompute():
     """The fast Pass-2 path (reuse Pass-1 eigendata) must match the explicit
@@ -181,7 +201,7 @@ def test_run_representative_analysis_end_to_end():
     result = rep.run_representative_analysis(3, cfg, show_progress=False)
 
     assert len(result["metadata"]) == 25
-    assert len(result["representative"]) == 8
+    assert len(result["representative"]) == 9
     for name, res in result["representative"].items():
         assert res["case"] == name
         assert res["E"].shape == result["average"]["E"].shape

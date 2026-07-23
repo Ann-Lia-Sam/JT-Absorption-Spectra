@@ -2,7 +2,7 @@
 
 **System:** two (E×e) Jahn–Teller molecules collectively coupled to the two circularly
 polarized modes of a Fabry–Perot cavity (the model of the 2025 JT paper), single-excitation
-`(n_ex=1, j=−1)` sector. Nv = 12. All eight representative realizations were drawn from a
+`(n_ex=1, j=−1)` sector. Nv = 12. All nine representative realizations were drawn from a
 Gaussian site-energy disorder of width **σ = 0.48 eV** and are compared against the
 **no-disorder reference** `heatmap_figS1_Nv12` (the paper's Fig. S1, clean N=2) and the clean
 absorption spectrum `spectrum_ref_2mol_2.2.pl`.
@@ -128,6 +128,7 @@ Notation: δᵢ = εᵢ − 7.0 (detuning from resonance), Δ = ε₁−ε₂ (m
 | **F** Common red (matched) | (6.674, 6.702) | 0.03 | −1.3g | 104 | 22.4 | 31 | **enhanced** |
 | **G** Single-mol resonant | (7.010, 6.752) | 0.26 (g) | −0.5g | 132 | 21.6 | 29 | **enhanced** |
 | **H** Bare-molecule limit | (6.246, 6.146) | 0.10 | −3.3g | 8 | 4.5 | 9 | **dead: decoupled** |
+| **I** A–D line (A↔D interior) | (6.720, 7.328) | 0.61 (2.5g) | ~0 | 46 | 16.2 | 27 | intermediate |
 
 ### A — Resonant baseline (internal control)
 Both molecules at resonance, matched (Δ≈0, s≈0). **Absorption:** LP 6.518 + shoulders 6.611/6.676;
@@ -155,6 +156,25 @@ One molecule on resonance (δ₁≈0), the other only −g away — so Δ = 0.26
 v ∈ [−15,14], visibly the broadest P(v) spread. **Meaning:** despite the label, G is a *mildly
 asymmetric collective* case, not a localized one; the slight symmetry breaking maximally brightens
 the dark manifold. Contrast with C below, where Δ ≫ g genuinely localizes.
+
+### I — A–D line, interior point between A and D (**intermediate**)
+The representative point *on the line connecting A and D*, chosen (per the group's request) as the
+interior realization sitting on that line closest to the ω_c dotted line. The A–D line is the s ≈ 0
+anti-diagonal taken in the D-ward direction (ε₁ < ε < ε₂): here ε₁ = 6.720 (red by −0.28), ε₂ = 7.328
+(blue by +0.33), so **opposite disorder, s = +0.02 ≈ 0**, with mismatch Δ = 0.61 = 2.5g — about a
+third of the way from A (Δ→0) toward D (Δ = 6g). **Absorption:** a broad, richly structured spectrum
+whose **brightest peak sits at 6.903 ≈ ω_c**, flanked by a full LP cluster (6.375/6.458/6.545/6.621/
+6.678) and UP features (7.335/7.451/7.565) — oscillator strength spread across the whole band rather
+than concentrated in one polariton. **Heatmap:** **46** bright states (*more* than A's 39), but
+PR_max 16.2 and PR_mean 7.4 (both *below* A's 20.6/12.9), v ∈ [−14,13], span 27. **Meaning:** this is
+the **intermediate regime on the A–D line**. The opposite-disorder mismatch of 2.5g breaks the
+permutation symmetry and **brightens dark states** (46 > 39 bright — more peaks appear in absorption),
+yet the same mismatch **reduces the per-polariton cascade** (PR 16 < 20 — each bright state is spread
+over fewer v sectors). So disorder here simultaneously *exposes* more of the manifold and *degrades*
+the coherent spread — a genuinely mixed outcome, sitting between A's full collective cascade and D's
+localized single peak. It is the near-midpoint the group asked for on the A↔D line, and confirms the
+cascade weakens monotonically (PR 20.6 → 16.2 → 8.5 for A → I → D) as the opposite-disorder mismatch
+grows along that line.
 
 ### E — Common blue detuning (**partial**)
 Both molecules ≈ +g above resonance, near-matched (Δ = 0.17). **Absorption:** blue-shifted, collapsed
@@ -201,7 +221,7 @@ detuning (decoupling). Both land at PR ≈ 4.
 
 ## 4. Synthesis — two axes, three regimes
 
-Ordering by cascade strength: **F (22.4) ≈ G (21.6) ≈ A (20.6) > E (12.5) ≈ B (11.6) > D (8.5) > H (4.5) ≈ C (3.8).**
+Ordering by cascade strength: **F (22.4) ≈ G (21.6) ≈ A (20.6) > I (16.2) > E (12.5) ≈ B (11.6) > D (8.5) > H (4.5) ≈ C (3.8).**
 
 ```
                      common-mode detuning s  (vs √N·g ≈ Ω)
@@ -212,17 +232,29 @@ Ordering by cascade strength: **F (22.4) ≈ G (21.6) ≈ A (20.6) > E (12.5) �
                 ├───────────────────────────┼──────────────────────────┤
          large  │ C  DEAD (localized, 1-mol) │ D  single peak, localizing│  large Δ
                 │ G* (*Δ≈g only → still coll.)│                          │  (mismatched)
+                │ I  (A–D line, Δ=2.5g,       │                          │
+                │     opp. disorder →         │                          │
+                │     INTERMEDIATE)           │                          │
                 └───────────────────────────┴──────────────────────────┘
 ```
 
-- **Mismatch axis (Δ vs g):** Δ ≲ g → collective (A, E, B, G); Δ ≫ g → localize on one molecule →
-  single-molecule bounded cascade (C; D partially). This is the 2023↔2025 JT crossover.
-- **Common-mode axis (s vs √N·g):** |s| ≲ √N·g → pair stays in the polariton (A, F even at 1.3g);
+- **Mismatch axis (Δ vs g):** Δ ≲ g → collective (A, E, B, G); Δ ~ 2–3g → intermediate (I); Δ ≫ g →
+  localize on one molecule → single-molecule bounded cascade (C; D partially). This is the 2023↔2025
+  JT crossover.
+- **Common-mode axis (s vs √N·g):** |s| ≲ √N·g → pair stays in the polariton (A, F even at 1.3g, I);
   |s| ≫ √N·g → both fall out of the polariton, bright state → bare photon (H). This is the arrowhead
   `W = 2g` dissolution applied to the joint detuning.
+- **The A–D line (s ≈ 0, opposite disorder):** parametrized by the mismatch Δ, it runs from **A**
+  (Δ→0, full cascade, PR 20.6) through **I** (Δ = 2.5g, intermediate — dark states brighten to 46
+  peaks but PR drops to 16.2) out to **D** (Δ = 6g, both molecules far off resonance → localizing,
+  PR 8.5). So **the cascade weakens monotonically along the line as the opposite-disorder mismatch
+  grows** — the A↔D interior behaviour the group asked to probe.
 - **Enhancement band:** when the bright polariton is pushed *toward* the dense dark manifold (F, G:
   offsets ~±g_c, near resonance) moderate mixing brightens many dark states and **enriches** the
   observed cascade — the disorder paper's central result, and the reason #bright jumps 42 → 104/132.
+  Case I shows the flip side: opposite-disorder mismatch also brightens dark states (46 peaks) but,
+  because it simultaneously detunes the two molecules from each other, it *lowers* the per-state
+  spread (PR 16 < 20) rather than enriching it.
 
 **Everything is one story (from §1):** the amount of **bright/dark mixing** (set by Δ and s relative
 to the couplings) decides whether disorder *exposes* the cascade (F, G), leaves it intact (A),
@@ -236,11 +268,11 @@ partially disrupts it (E, B, D), or destroys it (C, H).
    selection criteria; PR and #bright fluctuate strongly between realizations. Use these as
    *mechanism illustrations*. For quantitative claims, average PR over all realizations at σ=0.48.
 2. **#bright is threshold-dependent** (`heatmap_bright_threshold = 1e-2`, relative to each case's
-   max). The 42 → 104/132 jump partly reflects a *lower peak* with more states above 1%. **PR (per
+   max). The 42 → 104/132/77 jump partly reflects a *lower peak* with more states above 1%. **PR (per
    state) is the cleaner cascade metric** — trust it over the raw count. (The brightening it reflects
    is real; its magnitude via #bright is not a hard number.)
 3. **σ = 0.48 is one strong value** (σ/Ω ≈ 0.70, just below the `W=2g` crossover). To *demonstrate*
-   the two-axis picture you want the same 8 cases at σ ≈ g ≈ 0.24 (already computed) and, ideally,
+   the two-axis picture you want the same 9 cases at σ ≈ g ≈ 0.24 (already computed) and, ideally,
    PR mapped over the (Δ, s) plane — then C/H should switch from near-collective to dead as σ grows.
 4. The 2-molecule "bright/dark" language is the N→∞ arrowhead limit specialized to N=2; with only two
    molecules there is one dark combination per vibronic channel, so "brightening" here means the

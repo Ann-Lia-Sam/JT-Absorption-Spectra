@@ -8,7 +8,7 @@ polaritonic Hamiltonian, how the single-molecule vibronic-sector population
 wired into the CLI. It complements
 [`SPECTRUM_WALKTHROUGH.md`](SPECTRUM_WALKTHROUGH.md) (the absorption pipeline)
 and [`REPRESENTATIVE_ANALYSIS.md`](../REPRESENTATIVE_ANALYSIS.md)-style docs for
-the Case A–K selection; here the focus is the **new physics** (vibronic basis,
+the Case A–I selection; here the focus is the **new physics** (vibronic basis,
 polaritonic Hamiltonian, P(v)) and the **driver** that ties it to the CLI.
 
 Five files are covered, in the order data flows through them:
@@ -771,13 +771,13 @@ def bright_heatmap(sol, cfg, grid=None) -> HeatmapResult:
 ### 4.1 Purpose (module docstring, lines 1–24)
 
 This module is the glue between:
-- the **Case A–K selection** in `spectrum/representative.py` (reused
+- the **Case A–I selection** in `spectrum/representative.py` (reused
   unmodified — it needs only each realization's drawn `(eps1, eps2)`, no
   absorption diagonalization), and
 - the **vibronic → polaritonic → P(v)** machinery above,
 
 to produce one Fig. S1 heatmap per selected representative realization. It
-does exactly **one polaritonic diagonalization per selected case** (~11, not
+does exactly **one polaritonic diagonalization per selected case** (~9, not
 the full 100–300-realization disorder cloud), and can spread those across
 worker processes.
 
@@ -945,13 +945,27 @@ def run_representative_heatmaps(Nv, cfg, show_progress=True) -> Dict:
 The full standalone workflow: replay the RNG stream to get the `(eps1, eps2)`
 metadata cloud (`collect_realization_metadata`, from `representative.py` —
 *not* the absorption disorder average itself, just the lightweight per-draw
-bookkeeping), select the 11 physical cases from it
+bookkeeping), select the 9 physical cases from it
 (`select_representative_realizations`, also from `representative.py`,
 unmodified), then compute their heatmaps. This is why the heatmap workflow
 is cheap: it never touches `spectrum.compute_spectrum_for_Nv` or the
 disorder-averaging loop at all.
 
 ### 4.6 Plotting (lines 205–253)
+
+**Axes at a glance** — each heatmap plot has up to three axes:
+
+| axis | quantity | source | always shown? |
+|---|---|---|---|
+| x (bottom) | bright polaritonic state **index**, energy-ordered (0, 1, 2, …) | `x = np.arange(n_bright)` | yes |
+| y (left) | vibronic sector **v**, color = `P(v)` | `entry["grid"]` / `entry["heatmap"]` | yes |
+| y (right) | bright state **energy** (eV), plotted against the same x | `entry["energies"]` | only with `show_energy_axis=True` / `--heatmap-energy-axis` |
+
+The x-axis and left y-axis together are the paper's Fig. S1 layout (discrete index vs.
+vibronic sector, colored by `P(v)`). The right y-axis is the project's own addition
+(the "energy-axis overlay" described further below) — it shares the *same* x-axis as
+the heatmap, so a bright state at horizontal position `j` has both a `P(v)` column
+(left) and a point on the energy curve (right) at that same `j`.
 
 ```python
 def _crop_v_range(grid: np.ndarray, heatmap: np.ndarray, floor: float = 1e-4):
@@ -968,7 +982,8 @@ crop the plot's y-axis so it isn't dominated by empty high-`|v|` sectors that
 `sector_grid` (§3.2) included for completeness but which never get populated.
 
 ```python
-def plot_representative_heatmap(entry, cfg, out_path, show=True) -> str:
+def plot_representative_heatmap(entry, cfg, out_path, show=True,
+                                show_energy_axis=False) -> str:
     import matplotlib
     if not show:
         matplotlib.use("Agg")
@@ -985,14 +1000,18 @@ def plot_representative_heatmap(entry, cfg, out_path, show=True) -> str:
     cbar.set_label(r"$P(v)$")
     ax.set_xlabel("Bright polaritonic states (energy-ordered)")
     ax.set_ylabel(r"Vibronic sector $v$")
-    ax.set_title(
-        f"{entry['case']}\n"
-        f"realization #{entry['realization_index']}: "
-        rf"$\epsilon_1$={entry['eps1']:.3f} eV, $\epsilon_2$={entry['eps2']:.3f} eV "
-        f"(Nv={cfg.heatmap_nv}, σ={cfg.sigma:g})"
-    )
+    ax.set_title(...)
     vlo, vhi = _crop_v_range(grid, heatmap)
     ax.set_ylim(vlo - 0.5, vhi + 0.5)
+
+    if show_energy_axis and n_bright > 0:
+        energies = entry["energies"]
+        ax2 = ax.twinx()
+        ax2.plot(x, energies, color="white", linewidth=1.5, zorder=3)
+        ax2.plot(x, energies, "o", color="crimson", markersize=3, zorder=4)
+        ax2.set_ylabel("Energy (eV)", color="crimson")
+        ax2.tick_params(axis="y", colors="crimson")
+
     fig.tight_layout()
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     if show:
@@ -1020,6 +1039,19 @@ def plot_representative_heatmap(entry, cfg, out_path, show=True) -> str:
   at a glance.
 - y-limits use `_crop_v_range` with half-cell padding (`±0.5`) so the
   outermost populated row isn't clipped by the axis edge.
+- **`show_energy_axis` (optional, off by default)** — adds a **second y-axis on
+  the right** (`ax.twinx()`) plotting each bright state's raw energy
+  (`entry["energies"]`, in eV) against the *same* `x = np.arange(n_bright)`
+  bright-state index the heatmap uses. Because the bright states are already
+  energy-ordered, this curve is monotonically increasing; a visible **jump or
+  plateau** in it marks the boundary between the lower-polariton and
+  upper-polariton branches, so one can read off *which heatmap columns belong to
+  which branch* instead of guessing from the absorption spectrum. This was an
+  explicit group-meeting request ("add one curve on top of this, use the second
+  y-axis … energy versus index of the state … then at some point you should see
+  some jump that says up to here it is my lower polariton, after that upper").
+  It is drawn as a white underlay + crimson markers so it reads over the
+  `viridis` colormap. Enabled from the CLI via `--heatmap-energy-axis` (§5.1).
 
 ### 4.7 Storage (lines 256–299)
 
@@ -1075,19 +1107,26 @@ without recomputation, following the same provenance convention as
 ```python
 p.add_argument("--representative-heatmap", action="store_true",
                help="For each physically selected representative realization "
-                    "(Cases A-K, same selection as --representative), build the "
+                    "(Cases A-I, same selection as --representative), build the "
                     "vibronic->polaritonic Hamiltonian and plot the paper's "
                     "discrete Fig. S1 P(v) heatmap. ...")
 p.add_argument("--heatmap-nv", type=int, default=None,
                help="Vibrational Fock cutoff for the heatmap vibronic basis "
                     "(default: config heatmap_nv=12).")
+p.add_argument("--heatmap-energy-axis", action="store_true",
+               help="Add a second y-axis on the right of each heatmap plot showing "
+                    "bright-state energy vs. the same bright-state index, so the "
+                    "LP/UP branch boundary (a jump in that curve) is readable.")
 ```
 
 `--representative-heatmap` is a plain boolean flag selecting this workflow
 instead of the default Nv sweep (or `--representative`, `--sigma-sweep`,
 etc.). `--heatmap-nv` overrides `cfg.heatmap_nv` specifically for this
 workflow's vibronic basis size, independent of the absorption pipeline's own
-`Nv`/`nv_list`.
+`Nv`/`nv_list`. `--heatmap-energy-axis` is an optional boolean (off by default)
+that turns on the right-hand energy-vs-index overlay described in §4.6; it is
+threaded straight through to `plot_representative_heatmap`'s `show_energy_axis`
+parameter (§5.2) and changes only the rendered PNG, not the saved `.npz` arrays.
 
 ### 5.2 `run_representative_heatmap` (lines 293–341)
 
@@ -1107,14 +1146,14 @@ def run_representative_heatmap(args, cfg: Config) -> None:
 
     if cfg.n_workers is None:
         usable = max(1, (os.cpu_count() or 1) - 2)
-        cfg.n_workers = max(1, min(usable, 11))
+        cfg.n_workers = max(1, min(usable, 9))
         if cfg.n_workers > 1:
             print(f"[repr-heatmap] auto-parallelizing over {cfg.n_workers} "
                   f"worker processes (override with --workers N).")
 
     ensure_results_dir(cfg)
 
-    print(f"[repr-heatmap] selecting Cases A-K (Nv={Nv}, sigma={cfg.sigma:g}, "
+    print(f"[repr-heatmap] selecting Cases A-I (Nv={Nv}, sigma={cfg.sigma:g}, "
           f"{cfg.n_realizations} realizations) and building P(v) heatmaps "
           f"(heatmap_nv={cfg.heatmap_nv}) ...")
     result = rh.run_representative_heatmaps(Nv, cfg, show_progress=True)
@@ -1128,7 +1167,8 @@ def run_representative_heatmap(args, cfg: Config) -> None:
               f"{entry['eps2']:>10.4f}{n_bright:>9}")
         rh.save_representative_heatmap(entry, cfg, Nv)
         out_path = rh.representative_heatmap_path(cfg, Nv, entry["case"])
-        rh.plot_representative_heatmap(entry, cfg, out_path, show=not args.no_show)
+        rh.plot_representative_heatmap(entry, cfg, out_path, show=not args.no_show,
+                                       show_energy_axis=args.heatmap_energy_axis)
 
     print(f"\nDone. All heatmaps in {cfg.results_dir}/")
 ```
@@ -1143,7 +1183,7 @@ def run_representative_heatmap(args, cfg: Config) -> None:
    consistently (e.g. `--nv` picks the first value if given, same as the
    representative-spectrum runner).
 3. **Auto-parallelize** (lines 316–321): if the user didn't pin `--workers`,
-   pick `min(cpu_count - 2, 11)` workers — capped at 11 because that's (at
+   pick `min(cpu_count - 2, 9)` workers — capped at 9 because that's (at
    most) how many cases there are; more workers than tasks would be wasted.
    Prints a one-line notice only if actually parallelizing (`> 1`).
 4. **Run the workflow** (`rh.run_representative_heatmaps`) with a progress
@@ -1193,7 +1233,7 @@ that skips every other workflow (Nv sweep, sigma sweep, realization sweep).
   probability-conservation claims.
 - **`test_end_to_end_representative_heatmaps`** /
   **`test_solve_matches_selected_representative_index`** — run the full
-  `run_representative_heatmaps` workflow, check all 11 letters A–K appear with
+  `run_representative_heatmaps` workflow, check all 9 letters A–I appear with
   valid heatmaps, and confirm that a selected case's heatmap was built from
   *exactly* that realization's `(eps1, eps2)` (cross-checked again against the
   primitive route for that pair).

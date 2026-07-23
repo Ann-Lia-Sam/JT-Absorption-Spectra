@@ -8,10 +8,13 @@ the per-case spectra that ``python main.py --representative`` already wrote to
 each holding ``E`` and ``spectrum``), loads an overlay curve -- a 2-column
 ``.csv`` (``Energy,Intensity`` with a header; default ``coordinates.csv``) or a
 ``.pl`` cross-section -- and writes one new overlay PNG per *chosen* case. The
-overlay curve is peak-normalized to 1 (the same normalization the codebase uses
-for reference curves) and is otherwise plotted exactly as given. Nothing in
-``spectrum/`` is imported for modification -- only :class:`Config` and the
-``_sigma_tag`` filename helper are reused read-only.
+overlay curve is normalized the *same way as the plotted case spectra* -- using
+the mode each case ``.npz`` was written with (``reference``/``peak`` -> divide by
+own peak; ``area``/``reference_area`` -> divide by own area; ``none`` -> leave
+unchanged), so it always shares their vertical scale. Its raw (E, I) coordinates
+are otherwise plotted exactly as given. Nothing in ``spectrum/`` is imported for
+modification -- only :class:`Config` and the ``_sigma_tag`` filename helper are
+reused read-only.
 
 Typical workflow
 ----------------
@@ -57,11 +60,10 @@ def _load_reference_curve(path):
     """Load a 2-column overlay curve from a ``.pl`` (whitespace, ``#`` comments)
     or ``.csv`` (comma-delimited, one header row) file.
 
-    Returns ``(E, I)`` with ``I`` peak-normalized to 1 -- the same normalization
-    ``spectrum.plotting._plot_reference`` applies to the 2-mol reference under
-    ``NORMALIZATION='reference'``, so every overlaid curve shares one scale. The
-    raw (E, I) coordinates are otherwise left exactly as given -- no shifting,
-    rebinning, or interpolation.
+    Returns the **raw** ``(E, I)`` exactly as given -- no shifting, rebinning,
+    interpolation, or scaling. Vertical normalization is applied separately by
+    :func:`_normalize_curve`, using the same mode the plotted case spectra were
+    computed with (read from their ``.npz``), so the overlay shares their scale.
     """
     with open(path) as fh:
         first_line = fh.readline()
@@ -75,10 +77,37 @@ def _load_reference_curve(path):
     else:
         data = np.loadtxt(path, comments="#")
     E, I = data[:, 0], data[:, 1]
-    m = float(I.max())
-    if m > 0:
-        I = I / m
     return E, I
+
+
+def _normalize_curve(E, I, mode="reference"):
+    """Scale a curve the way ``spectrum.plotting._plot_reference`` scales the
+    reference curve under ``NORMALIZATION == mode`` -- so an overlaid curve ends
+    up on the same vertical scale as the plotted (already-normalized) spectra:
+
+    * ``"reference"`` / ``"peak"``      -- divide by the curve's own maximum (peaks at 1)
+    * ``"area"`` / ``"reference_area"`` -- divide by the curve's own trapezoidal area (∫=1)
+    * ``"none"`` (or any unknown mode)  -- leave unchanged
+
+    A non-positive max/area leaves the curve unchanged (nothing to divide by).
+    """
+    I = np.asarray(I, dtype=float)
+    if mode in ("reference", "peak"):
+        m = float(I.max())
+        return I / m if m > 0 else I
+    if mode in ("area", "reference_area"):
+        area = float(np.trapezoid(I, E))
+        return I / area if area > 0 else I
+    return I
+
+
+def _ylabel_for_mode(mode):
+    """Y-axis label describing how curves in this figure were normalized."""
+    if mode in ("reference", "peak"):
+        return "Intensity (peak-normalized)"
+    if mode in ("area", "reference_area"):
+        return "Intensity (area-normalized)"
+    return "Intensity"
 
 
 def _lp_up(E, I, wc=OMEGA_C):
@@ -189,9 +218,10 @@ def main():
     if os.path.getsize(ref_path) == 0:
         print(f"Overlay curve is empty (0 bytes): '{ref_path}'")
         sys.exit(1)
-    E1, I1 = _load_reference_curve(ref_path)
+    E1, I1 = _load_reference_curve(ref_path)  # raw; normalized per-case below
     print(f"[overlay] overlay curve: {ref_path}  "
-          f"({len(E1)} points, peak at {float(E1[np.argmax(I1)]):.4f} eV, peak-normalized to 1)")
+          f"({len(E1)} points, peak at {float(E1[np.argmax(I1)]):.4f} eV; "
+          f"normalized to match each plotted case's mode)")
     if args.check_ref:
         # Detailed peak/coupling diagnosis is opt-in (meaningful only if the
         # curve is a single-molecule JT-polariton spectrum).
@@ -248,18 +278,23 @@ def main():
         eps1, eps2 = float(d["eps1"]), float(d["eps2"])
         sig = float(d["sigma"])
         ridx = int(d["realization_index"])
+        # Normalization this case's spectrum was computed with (the "chosen"
+        # mode); scale every overlaid curve the same way so they share a scale.
+        norm_mode = str(d["normalization"]) if "normalization" in d.files else "reference"
 
         fig, ax = plt.subplots(figsize=(8, 5))
+        # ``spec`` is already normalized (saved that way); scale the overlays to match.
         ax.plot(E, spec, color="tab:red", linewidth=1.6,
                 label=f"{name.split(':')[0]} realization #{ridx}")
-        ax.plot(E1, I1, color="tab:green", linewidth=1.4,
+        ax.plot(E1, _normalize_curve(E1, I1, norm_mode), color="tab:green", linewidth=1.4,
                 label=overlay_label)
         if ref2 is not None:
-            ax.plot(ref2[0], ref2[1], color="black", linewidth=1.0, linestyle="--",
+            ax.plot(ref2[0], _normalize_curve(ref2[0], ref2[1], norm_mode),
+                    color="black", linewidth=1.0, linestyle="--",
                     label="2-mol σ=0 (ref)", zorder=10)
 
         ax.set_xlabel("Energy (eV)")
-        ax.set_ylabel("Intensity (peak-normalized refs)")
+        ax.set_ylabel(_ylabel_for_mode(norm_mode))
         ax.set_xlim(cfg.E_min, cfg.E_max)
         ax.set_title(
             f"{name}\n"

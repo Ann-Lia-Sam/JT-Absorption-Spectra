@@ -113,10 +113,10 @@ worker count automatically instead of silently running serial:
 if cfg.n_workers is None:
     usable = max(1, (os.cpu_count() or 1) - 2)
     cfg.n_workers = max(1, min(usable, cfg.n_realizations))   # representative
-    # ... = max(1, min(usable, 11))                            # heatmap (≤ 11 cases)
+    # ... = max(1, min(usable, 9))                             # heatmap (≤ 9 cases)
 ```
 
-Capped at the number of independent tasks (`n_realizations`, or 11 for the
+Capped at the number of independent tasks (`n_realizations`, or 9 for the
 heatmap — more workers than tasks is wasted). Prints a one-line notice so the
 behavior is visible. (The plain `Nv`/sigma/realization sweeps do **not**
 auto-parallelize — they run serial unless `--workers` is given.)
@@ -217,7 +217,7 @@ file — rerun with `--force` when parameters change.
 **Where:** [spectrum/representative.py](spectrum/representative.py)
 `collect_realization_metadata` + `select_representative_realizations`.
 
-The physically-selected Cases A–K depend only on each realization's drawn
+The physically-selected Cases A–I depend only on each realization's drawn
 `(eps1, eps2)`. Those are reproduced by **replaying the exact RNG stream**
 (same seed, same draw order as `_disorder_average`) — a handful of
 `rng.normal` calls, **no Hamiltonian, no `eigh`**. So choosing which
