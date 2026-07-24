@@ -86,12 +86,12 @@ def test_case_selection_sanity():
     metadata = rep.collect_realization_metadata(cfg, sigma=0.3, n_real=500)
     selections = rep.select_representative_realizations(metadata, cfg, sigma=0.3)
 
-    # All 9 physical cases A-I selected.
-    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGHI")
+    # All 8 physical cases A-H selected.
+    assert set(s["letter"] for s in selections.values()) == set("ABCDEFGH")
 
     # Every case claims a distinct realization (used_indices uniqueness).
     chosen = [s["metadata"].index for s in selections.values()]
-    assert len(chosen) == len(set(chosen)) == 9
+    assert len(chosen) == len(set(chosen)) == 8
 
     eps1 = np.array([m.eps1 for m in metadata])
     eps2 = np.array([m.eps2 for m in metadata])
@@ -114,57 +114,54 @@ def test_case_selection_sanity():
     # picked first, so it is simply the global minimum radial deviation.
     assert dist_from_center[idx_of("A")] == dist_from_center.min()
 
-    # B -- mismatch ~ coupling: inter-molecular gap sits right at g.
-    assert abs(gap[idx_of("B")] - g) < 0.05
+    # B -- large mismatch (localized): same-sign pair whose gap exceeds g.
+    if filt_of("B"):
+        assert d1[idx_of("B")] * d2[idx_of("B")] > 0
+    assert gap[idx_of("B")] > g
 
-    # C -- large mismatch (localized): same-sign pair whose gap exceeds g.
+    # C -- opposite disorder: detunings from resonance have opposite signs.
     if filt_of("C"):
-        assert d1[idx_of("C")] * d2[idx_of("C")] > 0
-    assert gap[idx_of("C")] > g
+        assert d1[idx_of("C")] * d2[idx_of("C")] < 0
 
-    # D -- opposite disorder: detunings from resonance have opposite signs.
-    if filt_of("D"):
-        assert d1[idx_of("D")] * d2[idx_of("D")] < 0
+    # D -- common blue detuning: both molecules ~ +g above resonance, matched.
+    iD = idx_of("D")
+    assert np.hypot(d1[iD] - g, d2[iD] - g) < 0.2
 
-    # E -- common blue detuning: both molecules ~ +g above resonance, matched.
+    # E -- common red detuning: both molecules ~ -g below resonance, matched.
     iE = idx_of("E")
-    assert np.hypot(d1[iE] - g, d2[iE] - g) < 0.2
+    assert np.hypot(d1[iE] + g, d2[iE] + g) < 0.2
 
-    # F -- common red detuning: both molecules ~ -g below resonance, matched.
+    # F -- single-molecule resonant: one molecule on resonance, other >~ g away.
     iF = idx_of("F")
-    assert np.hypot(d1[iF] + g, d2[iF] + g) < 0.2
+    assert min(abs(d1[iF]), abs(d2[iF])) < 0.1
+    if filt_of("F"):
+        assert max(abs(d1[iF]), abs(d2[iF])) > g
 
-    # G -- single-molecule resonant: one molecule on resonance, other >~ g away.
+    # G -- bare-molecule limit: same-sign pair with BOTH molecules well past g.
     iG = idx_of("G")
-    assert min(abs(d1[iG]), abs(d2[iG])) < 0.1
     if filt_of("G"):
-        assert max(abs(d1[iG]), abs(d2[iG])) > g
+        assert d1[iG] * d2[iG] > 0
+    assert min(abs(d1[iG]), abs(d2[iG])) > g
 
-    # H -- bare-molecule limit: same-sign pair with BOTH molecules well past g.
-    iH = idx_of("H")
-    if filt_of("H"):
-        assert d1[iH] * d2[iH] > 0
-    assert min(abs(d1[iH]), abs(d2[iH])) > g
-
-    # I -- A-D line, closest to omega_c: on the D-ward branch (eps1 < eps < eps2,
-    # i.e. d1 < 0 < d2 -- the same opposite-disorder side as D), the interior
+    # H -- A-C line, closest to omega_c: on the C-ward branch (eps1 < eps < eps2,
+    # i.e. d1 < 0 < d2 -- the same opposite-disorder side as C), the interior
     # point nearest the omega_c line, scored by |d1+d2| + min(|eps_i - wc|).
     wc = cfg.omega_c
     det1 = np.abs(eps1 - wc)
     det2 = np.abs(eps2 - wc)
-    score_I = np.abs(d1 + d2) + np.minimum(det1, det2)
-    iI = idx_of("I")
-    if filt_of("I"):
-        assert d1[iI] < 0 and d2[iI] > 0
+    score_H = np.abs(d1 + d2) + np.minimum(det1, det2)
+    iH = idx_of("H")
+    if filt_of("H"):
+        assert d1[iH] < 0 and d2[iH] > 0
 
     # It must be the best-scoring (min) realization among those still unused and
-    # passing the D-ward mask at the point case I is evaluated.
+    # passing the C-ward mask at the point case H is evaluated.
     chosen_indices = set(chosen)
     rest_eligible = [
         i for i in range(len(metadata))
-        if i not in chosen_indices and ((d1[i] < 0 and d2[i] > 0) or not filt_of("I"))
+        if i not in chosen_indices and ((d1[i] < 0 and d2[i] > 0) or not filt_of("H"))
     ]
-    assert score_I[iI] <= min(score_I[i] for i in rest_eligible) + 1e-12
+    assert score_H[iH] <= min(score_H[i] for i in rest_eligible) + 1e-12
 
 
 def test_pass2_reuse_matches_recompute():
@@ -201,7 +198,7 @@ def test_run_representative_analysis_end_to_end():
     result = rep.run_representative_analysis(3, cfg, show_progress=False)
 
     assert len(result["metadata"]) == 25
-    assert len(result["representative"]) == 9
+    assert len(result["representative"]) == 8
     for name, res in result["representative"].items():
         assert res["case"] == name
         assert res["E"].shape == result["average"]["E"].shape

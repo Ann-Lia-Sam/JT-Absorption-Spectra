@@ -10,7 +10,7 @@ physics. Two passes, kept deliberately memory-light:
   lightweight per-realization metadata -- ``(index, eps1, eps2, delta1,
   delta2)`` -- for every realization. No per-realization spectra are stored.
 * **Selection**: from that metadata cloud, automatically pick one realization
-  closest to each of several physically meaningful targets (Cases A-I).
+  closest to each of several physically meaningful targets (Cases A-H).
 * **Pass 2** ( :func:`recompute_representative_spectra` ): rebuild the static
   Hamiltonian once (as the existing sigma-sweep code already does) and
   recompute a full spectrum only for the handful of *selected* realizations --
@@ -90,7 +90,7 @@ def collect_realization_metadata(
 
 
 # ---------------------------------------------------------------------------
-# Automatic selection of representative realizations (Cases A-I)
+# Automatic selection of representative realizations (Cases A-H)
 #
 # Selection is done by PHYSICAL CRITERIA on each realization's *actual* drawn
 # site energies (eps1, eps2), never by "nearest to an invented target
@@ -104,20 +104,20 @@ def collect_realization_metadata(
 # transition* equals omega_c. Because omega_c was tuned to the clean bright peak
 # (eps0=cfg.eps -> bright ~ omega_c; verified: at eps_i=7.0 the bright line is
 # 6.85=omega_c), that condition is eps_i ~= eps0, NOT eps_i ~= omega_c. Every
-# case A-H below is therefore written in the signed detuning-from-resonance
+# case A-G below is therefore written in the signed detuning-from-resonance
 #   d_i = eps_i - eps0                    (c.d1, c.d2)
 # and the disorder scale is compared to the per-molecule coupling g = cfg.g.
-# Case I is the deliberate exception: it targets ``omega_c`` itself (``wc``/
+# Case H is the deliberate exception: it targets ``omega_c`` itself (``wc``/
 # ``det1``/``det2`` in _Ctx) -- see its comment in build_cases() below.
 #
 # The set spans two orthogonal axes: the common-mode shift s=(d1+d2)/2 (both
-# molecules move together; cases A/E/F/H) and the inter-molecular mismatch
-# |eps1-eps2|=|d1-d2| (cases B/C/D/G) -- so each case probes a distinct region.
-# Case I is an interior point ON the A-D line (the s~0 anti-diagonal, D-ward
+# molecules move together; cases A/D/E/G) and the inter-molecular mismatch
+# |eps1-eps2|=|d1-d2| (cases B/C/F) -- so each case probes a distinct region.
+# Case H is an interior point ON the A-C line (the s~0 anti-diagonal, C-ward
 # branch eps1<eps0<eps2) closest to the omega_c dotted line -- i.e. between the
-# resonant baseline A and the far opposite-disorder point D.
+# resonant baseline A and the far opposite-disorder point C.
 #
-# The 9 cases are processed in order A -> I. A shared ``used_indices`` set
+# The 8 cases are processed in order A -> H. A shared ``used_indices`` set
 # guarantees every case selects a *distinct* realization: each case takes the
 # best-scoring realization that has not already been claimed. If a case's
 # boolean filter admits no (unused) realization -- possible for a finite
@@ -127,7 +127,7 @@ def collect_realization_metadata(
 #
 # Physical constants used (all derived from cfg, none invented):
 #   eps0    = cfg.eps      clean transition energy == cavity-resonance point
-#   wc      = cfg.omega_c  cavity photon energy (unused by A-H; targeted by I)
+#   wc      = cfg.omega_c  cavity photon energy (unused by A-G; targeted by H)
 #   g       = cfg.g        per-molecule matter-cavity coupling (the disorder ruler)
 #   Omega   = cfg.Omega    collective light-matter coupling scale
 # ---------------------------------------------------------------------------
@@ -138,8 +138,8 @@ class _Ctx:
     eps2: np.ndarray      # drawn site energy, molecule 2
     d1: np.ndarray        # eps1 - eps0 (signed detuning from resonance)
     d2: np.ndarray        # eps2 - eps0
-    det1: np.ndarray      # |eps1 - wc|  (cavity-energy detuning; used only by case I)
-    det2: np.ndarray      # |eps2 - wc|  (cavity-energy detuning; used only by case I)
+    det1: np.ndarray      # |eps1 - wc|  (cavity-energy detuning; used only by case H)
+    det2: np.ndarray      # |eps2 - wc|  (cavity-energy detuning; used only by case H)
     gap: np.ndarray       # |eps1 - eps2|  (inter-molecular energy mismatch)
     eps0: float
     wc: float
@@ -165,22 +165,22 @@ class CaseSpec:
 
 
 def build_cases() -> List[CaseSpec]:
-    """The 9 physical cases A-I (see module docstring for the selection rules).
+    """The 8 physical cases A-H (see module docstring for the selection rules).
 
     Resonance is referenced to the clean transition energy ``eps0 = cfg.eps``
     (NOT to ``cfg.omega_c``): a molecule is cavity-resonant when its bright
     vibronic transition equals ``omega_c``, which happens when ``eps_i ~= eps0``
     -- the clean value -- because ``omega_c`` was tuned to the clean bright peak.
-    Every criterion A-H below is therefore written in the signed detuning-from-
+    Every criterion A-G below is therefore written in the signed detuning-from-
     resonance ``d_i = eps_i - eps0`` (``c.d1`` / ``c.d2``), and the disorder
-    scale is always compared to the per-molecule coupling ``g = cfg.g``. Case I
+    scale is always compared to the per-molecule coupling ``g = cfg.g``. Case H
     is the deliberate exception, targeting ``omega_c`` directly.
 
     The set spans two orthogonal axes -- the common-mode shift
     ``s = (d1 + d2)/2`` (both molecules move together) and the inter-molecular
     mismatch ``|eps1 - eps2| = |d1 - d2|`` (``c.gap``) -- so each case probes a
-    distinct region of the disorder plane. Case I lives on the same anti-
-    diagonal (``s ~ 0``) as A and D -- it is the point on the A-D line closest
+    distinct region of the disorder plane. Case H lives on the same anti-
+    diagonal (``s ~ 0``) as A and C -- it is the point on the A-C line closest
     to the scatter plot's dotted ``omega_c`` reference lines.
     """
     return [
@@ -191,74 +191,67 @@ def build_cases() -> List[CaseSpec]:
                  "eps1 ~ eps and eps2 ~ eps: both on cavity resonance (no disorder)",
                  "min", lambda c: np.hypot(c.d1, c.d2)),
 
-        # B -- Mismatch ~ coupling (crossover): inter-molecular gap comparable to
-        #      the coupling, |eps1 - eps2| ~ g -- the collective-to-localized
-        #      crossover. Minimize | |eps1 - eps2| - g |.
-        CaseSpec("B", "Mismatch ~ coupling",
-                 "|eps1 - eps2| ~ g (collective-to-localized crossover)",
-                 "min", lambda c: np.abs(c.gap - c.g)),
-
-        # C -- Large mismatch / localized: a large SAME-SIGN gap, i.e. one
+        # B -- Large mismatch / localized: a large SAME-SIGN gap, i.e. one
         #      molecule near resonance and the other far detuned on the same side
         #      -- the excitation localizes on the less-detuned molecule.
-        CaseSpec("C", "Large mismatch (localized)",
+        CaseSpec("B", "Large mismatch (localized)",
                  "|eps1 - eps2| >> g, same sign: excitation localizes on one molecule",
                  "max", lambda c: c.gap,
                  mask=lambda c: (c.d1 * c.d2) > 0),
 
-        # D -- Opposite disorder (anti-correlated): d1 and d2 have opposite signs
+        # C -- Opposite disorder (anti-correlated): d1 and d2 have opposite signs
         #      (net shift s ~ 0). Maximize the smaller |d_i| so BOTH molecules sit
         #      as far as possible from resonance, in opposite directions.
-        CaseSpec("D", "Opposite disorder",
+        CaseSpec("C", "Opposite disorder",
                  "(eps1 - eps)(eps2 - eps) < 0: molecules detuned oppositely (s ~ 0)",
                  "max", lambda c: np.minimum(np.abs(c.d1), np.abs(c.d2)),
                  mask=lambda c: (c.d1 * c.d2) < 0),
 
-        # E -- Common blue detuning (matched): both molecules ~ +g above
+        # D -- Common blue detuning (matched): both molecules ~ +g above
         #      resonance, staying matched. Minimize distance to (d1, d2) = (g, g).
-        CaseSpec("E", "Common blue detuning",
+        CaseSpec("D", "Common blue detuning",
                  "eps1 ~ eps2 ~ eps + g: both blue-detuned together (symmetry intact)",
                  "min", lambda c: np.hypot(c.d1 - c.g, c.d2 - c.g)),
 
-        # F -- Common red detuning (matched): both molecules ~ -g below
+        # E -- Common red detuning (matched): both molecules ~ -g below
         #      resonance. Minimize distance to (d1, d2) = (-g, -g).
-        CaseSpec("F", "Common red detuning",
+        CaseSpec("E", "Common red detuning",
                  "eps1 ~ eps2 ~ eps - g: both red-detuned together (symmetry intact)",
                  "min", lambda c: np.hypot(c.d1 + c.g, c.d2 + c.g)),
 
-        # G -- Single-molecule resonant (asymmetric): one molecule on resonance
+        # F -- Single-molecule resonant (asymmetric): one molecule on resonance
         #      (d ~ 0) while the other is detuned by at least ~ g. Minimize the
         #      smaller |d_i|, requiring the larger to exceed g.
-        CaseSpec("G", "Single-molecule resonant",
+        CaseSpec("F", "Single-molecule resonant",
                  "one molecule on resonance while the other is detuned by >~ g",
                  "min", lambda c: np.minimum(np.abs(c.d1), np.abs(c.d2)),
                  mask=lambda c: np.maximum(np.abs(c.d1), np.abs(c.d2)) > c.g),
 
-        # H -- Bare-molecule limit: both molecules far off-resonance on the SAME
+        # G -- Bare-molecule limit: both molecules far off-resonance on the SAME
         #      side, |eps_i - eps0| >> g -- both decouple from the cavity (no
         #      polariton). Maximize the smaller |d_i| among same-sign pairs.
-        CaseSpec("H", "Bare-molecule limit",
+        CaseSpec("G", "Bare-molecule limit",
                  "both |eps_i - eps| >> g, same sign: both decouple from the cavity",
                  "max", lambda c: np.minimum(np.abs(c.d1), np.abs(c.d2)),
                  mask=lambda c: (c.d1 * c.d2) > 0),
 
-        # I -- A-D line, closest to omega_c: a representative point *between* A
-        #      and D on the line joining them. That line is the s=0 anti-diagonal
-        #      eps1 + eps2 = 2*eps0 taken in the D-ward direction
+        # H -- A-C line, closest to omega_c: a representative point *between* A
+        #      and C on the line joining them. That line is the s=0 anti-diagonal
+        #      eps1 + eps2 = 2*eps0 taken in the C-ward direction
         #      (eps1 < eps0 < eps2, i.e. d1 < 0 < d2 -- the SAME opposite-disorder
-        #      branch D lives on, NOT its mirror). A sits at its origin (d1=d2=0)
-        #      and D far out; case I is the interior point on that segment nearest
+        #      branch C lives on, NOT its mirror). A sits at its origin (d1=d2=0)
+        #      and C far out; case H is the interior point on that segment nearest
         #      the cavity. Its score combines two distances, both in eV:
-        #        * |d1 + d2| = 2|s|  -- the *perpendicular distance to the A-D
-        #          line* (how well the point sits ON the A-D line), and
+        #        * |d1 + d2| = 2|s|  -- the *perpendicular distance to the A-C
+        #          line* (how well the point sits ON the A-C line), and
         #        * min(|eps1 - wc|, |eps2 - wc|) -- proximity of the nearer
         #          molecule to the omega_c dotted line in the scatter plot.
         #      Minimizing their sum picks the on-line point closest to omega_c
-        #      (A and D themselves are already claimed, so I is a distinct
+        #      (A and C themselves are already claimed, so H is a distinct
         #      interior realization). This case is deliberately referenced to
-        #      omega_c (via det1/det2), unlike the eps0-referenced cases A-H.
-        CaseSpec("I", "A-D line, closest to omega_c",
-                 "between A and D on the line joining them (eps1 < eps < eps2, "
+        #      omega_c (via det1/det2), unlike the eps0-referenced cases A-G.
+        CaseSpec("H", "A-C line, closest to omega_c",
+                 "between A and C on the line joining them (eps1 < eps < eps2, "
                  "s ~ 0), the point nearest the omega_c dotted line: minimize "
                  "|d1+d2| + min(|eps1-wc|, |eps2-wc|)",
                  "min", lambda c: np.abs(c.d1 + c.d2) + np.minimum(c.det1, c.det2),
@@ -282,7 +275,7 @@ def _build_ctx(metadata: List[RealizationMetadata], cfg: Config) -> _Ctx:
 def select_representative_realizations(
     metadata: List[RealizationMetadata], cfg: Config, sigma: Optional[float] = None
 ) -> Dict[str, Dict]:
-    """Select one *distinct* realization for each physical case A-I.
+    """Select one *distinct* realization for each physical case A-H.
 
     Cases are evaluated in order; a shared ``used_indices`` set enforces
     uniqueness (each case claims the best-scoring realization not yet taken).
@@ -405,7 +398,7 @@ def recompute_representative_spectra(
 ) -> Dict[str, Dict]:
     """Build the static Hamiltonian once and reuse it for every selected case.
 
-    Only the (typically 9) *selected* representative realizations are
+    Only the (typically 8) *selected* representative realizations are
     recomputed here -- never the full disorder ensemble -- keeping Pass 2's
     memory and compute footprint independent of ``cfg.n_realizations``.
     """
@@ -451,7 +444,7 @@ def assemble_representative_spectra(
     normalizing with the ensemble's reference constants -- **no re-diagonalization
     at all**. This is bit-identical (to float round-off in the broadening
     summation) to :func:`recompute_representative_spectra`, but skips the
-    (typically 9) expensive ``eigh`` calls entirely.
+    (typically 8) expensive ``eigh`` calls entirely.
 
     Falls back to a one-shot recompute for any case whose realization index is
     out of range for the stored arrays (should not happen when ``average`` came

@@ -101,8 +101,8 @@ Summer-Internship-2026/
     ├── spectrum_Nv2.dat    # portable two-column text (E, intensity)
     ├── overlay_spectra.png # final overlaid figure
     ├── representative_scatter_Nv12_sigma0.24.png
-    ├── representative_spectrum_Nv12_sigma0.24_case{A..I}.png
-    └── representative_heatmap_Nv12_sigma0.24_case{A..I}.png
+    ├── representative_spectrum_Nv12_sigma0.24_case{A..H}.png
+    └── representative_heatmap_Nv12_sigma0.24_case{A..H}.png
 ```
 
 ---
@@ -279,23 +279,22 @@ Two memory-light passes:
    | Case | Criterion |
    |------|-----------|
    | A | Resonant baseline (no disorder) — minimize `√(d1² + d2²)` |
-   | B | Mismatch ~ coupling (crossover) — minimize `\|\|eps1 − eps2\| − g\|` |
-   | C | Large mismatch (localized) — same-sign `d1·d2 > 0`, maximize `\|eps1 − eps2\|` |
-   | D | Opposite disorder — `d1·d2 < 0` (net shift `s ≈ 0`), maximize `min(\|d1\|, \|d2\|)` |
-   | E | Common blue detuning — minimize distance to `(d1, d2) = (g, g)` |
-   | F | Common red detuning — minimize distance to `(d1, d2) = (−g, −g)` |
-   | G | Single-molecule resonant — minimize `min(\|d1\|, \|d2\|)`, requiring `max(\|d1\|, \|d2\|) > g` |
-   | H | Bare-molecule limit — same-sign `d1·d2 > 0`, maximize `min(\|d1\|, \|d2\|)` |
-   | I | A–D line, closest to `ωc` — same opposite-sign line as D (`d1·d2 < 0`), minimize `min(\|eps1 − ωc\|, \|eps2 − ωc\|)` |
+   | B | Large mismatch (localized) — same-sign `d1·d2 > 0`, maximize `\|eps1 − eps2\|` |
+   | C | Opposite disorder — `d1·d2 < 0` (net shift `s ≈ 0`), maximize `min(\|d1\|, \|d2\|)` |
+   | D | Common blue detuning — minimize distance to `(d1, d2) = (g, g)` |
+   | E | Common red detuning — minimize distance to `(d1, d2) = (−g, −g)` |
+   | F | Single-molecule resonant — minimize `min(\|d1\|, \|d2\|)`, requiring `max(\|d1\|, \|d2\|) > g` |
+   | G | Bare-molecule limit — same-sign `d1·d2 > 0`, maximize `min(\|d1\|, \|d2\|)` |
+   | H | A–C line, closest to `ωc` — same opposite-sign line as C (`d1·d2 < 0`), minimize `min(\|eps1 − ωc\|, \|eps2 − ωc\|)` |
 
 3. **Pass 2** — build the static Hamiltonian **once** (as the sigma-sweep code already
-   does) and recompute a full spectrum only for those ~9 selected realizations, reusing
+   does) and recompute a full spectrum only for those ~8 selected realizations, reusing
    the same Hamiltonian/diagonalization/broadening/normalization building blocks as the
    main pipeline — so Pass 2's cost and memory footprint never scale with
    `n_realizations`.
 
 ```bash
-# 300 realizations at Nv=12 (defaults), scatter + 9 case plots + summary table
+# 300 realizations at Nv=12 (defaults), scatter + 8 case plots + summary table
 venv/bin/python main.py --representative
 
 # Custom Nv / realization count / disorder strength, headless
@@ -320,7 +319,7 @@ realizations), `representative_summary_Nv{N}_sigma{σ}.csv` (the case table),
 A further **separate, additive** analysis layer (`--representative-heatmap`) reproduces
 the paper's **Fig. S1** — a heatmap of the single-molecule vibronic-sector population
 `P(v)` of the bright polaritonic states — for each physically selected representative
-realization (**Cases A–I**, the same selection as `--representative`). The frozen
+realization (**Cases A–H**, the same selection as `--representative`). The frozen
 absorption-spectrum modules (`basis.py`, `operators.py`, `hamiltonian.py`,
 `spectrum.py`) are left **completely untouched**; the P(v) machinery lives in new
 modules (`vibronic.py`, `polariton.py`, `participation.py`, `representative_heatmap.py`)
@@ -349,14 +348,14 @@ Each plot is the discrete Fig. S1: **x = bright polaritonic states (energy-order
 
 ### Cost
 
-This does **one** polaritonic diagonalization per selected case (~9), **not** the full
-disorder average — the Case A–I selection needs only the drawn `(eps1, eps2)` cloud (an
-RNG replay), so no absorption disorder loop runs here. With `--workers` the ~9 solves
+This does **one** polaritonic diagonalization per selected case (~8), **not** the full
+disorder average — the Case A–H selection needs only the drawn `(eps1, eps2)` cloud (an
+RNG replay), so no absorption disorder loop runs here. With `--workers` the ~8 solves
 run in roughly one parallel round. (The single-molecule step above is essentially free;
 see [performance notes](#performance-notes).)
 
 ```bash
-# P(v) heatmaps for all 9 cases at Nv=12 (defaults), parallel, headless
+# P(v) heatmaps for all 8 cases at Nv=12 (defaults), parallel, headless
 venv/bin/python main.py --representative-heatmap --nv 12 \
     --repr-realizations 100 --repr-sigma 0.024 --workers 12 --no-show
 ```
@@ -371,7 +370,7 @@ venv/bin/python main.py --representative-heatmap --nv 12 \
 | `--workers N`              | Parallelize the per-case diagonalizations across `N` processes.     |
 
 Outputs (in `results/`): one
-`representative_heatmap_Nv{N}_sigma{σ}_case{X}.{png,npz}` per case `X` in `A..I`.
+`representative_heatmap_Nv{N}_sigma{σ}_case{X}.{png,npz}` per case `X` in `A..H`.
 
 > **`--representative` and `--representative-heatmap` are separate steps.** The former
 > produces the representative absorption *spectra*; the latter the P(v) *heatmaps*. Run
@@ -467,7 +466,7 @@ The **realization sweep** writes files tagged by `Nv`, `sigma`, and count:
   overlaid, one curve per realization count.
 
 The **representative P(v) heatmap** (`--representative-heatmap`) writes one pair of
-files per case `X` in `A..I`:
+files per case `X` in `A..H`:
 
 - `results/representative_heatmap_Nv{Nv}_sigma{sigma}_case{X}.png` — the Fig. S1 heatmap.
 - `results/representative_heatmap_Nv{Nv}_sigma{sigma}_case{X}.npz` — its arrays
