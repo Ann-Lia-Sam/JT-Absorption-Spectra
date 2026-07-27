@@ -118,7 +118,7 @@ NISER, Bhubaneswar\\[0.6em]
               polariton, separated by the \textbf{Rabi splitting} $\Omega$.
         \item Coupling $N$ molecules collectively enhances the interaction as
               $\sqrt{N}$: the single-molecule coupling is
-              $g=\Omega/(2\sqrt N)$, where N=1.
+              $g=\Omega/(2\sqrt N)$.
       \end{itemize}
     \end{column}
     \begin{column}{0.46\textwidth}
@@ -140,10 +140,10 @@ NISER, Bhubaneswar\\[0.6em]
           \filldraw[purple!40] (\x+0.18,1.15) circle (2pt);
         }
         \node at (1.6,0.6) {\tiny $N$ molecules};
-        \draw[<->,thick] (3.55,0)--(3.55,3);
-        \node[rotate=90] at (3.85,1.5) {\tiny cavity length $L$};
+        \draw[<->,thick] (0,-0.6)--(3.2,-0.6);
+        \node[below] at (1.6,-0.6) {\tiny mirror spacing $L$};
       \end{tikzpicture}\\[0.4em]
-      {\scriptsize Collective strong coupling:\\ LP/UP split by $\Omega=2\sqrt N\,g$.}
+      {\scriptsize Molecules in a cavity with discrete, quantized cavity modes.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -171,19 +171,18 @@ NISER, Bhubaneswar\\[0.6em]
       \centering
       \begin{tikzpicture}[scale=0.9]
         % mexican hat cross-section
-        \draw[->] (-2.2,0) -- (2.4,0) node[right]{\scriptsize $Q$};
+        \draw[->] (-2.3,0) -- (2.3,0) node[right]{\scriptsize $Q$};
         \draw[->] (0,-0.3) -- (0,2.8) node[above]{\scriptsize $E$};
         \draw[thick,red!70,domain=-2:2,samples=100,smooth]
-          plot (\x,{0.9*(\x*\x*0.55 - 0.9) + 1.7 + 0.15*abs(\x)});
+          plot (\x,{0.9*(\x*\x*0.55 - 0.9) + 1.7 + 0.32*abs(\x)});
         \draw[thick,red!70,domain=-2:2,samples=100,smooth]
-          plot (\x,{0.9*(\x*\x*0.55 - 0.9) + 1.7 - 0.15*abs(\x)});
-        \node[red!70] at (1.7,2.5) {\scriptsize $|E_\pm\rangle$};
+          plot (\x,{0.9*(\x*\x*0.55 - 0.9) + 1.7 - 0.32*abs(\x)});
+        \node[red!70] at (1.55,2.75) {\scriptsize $|E_+\rangle$};
+        \node[red!70] at (1.55,1.28) {\scriptsize $|E_-\rangle$};
         % ground
-        \draw[thick,blue!70,domain=-1.6:1.6,samples=80,smooth]
+        \draw[thick,blue!70,domain=-2:2,samples=100,smooth]
           plot (\x,{0.35*\x*\x});
-        \node[blue!70] at (1.5,0.7) {\scriptsize $|A\rangle$};
-        \draw[<->,gray] (0.05,0.9) -- (0.05,1.55);
-        \node[capgray] at (0.5,1.25) {\tiny $\omega_c$};
+        \node[blue!70] at (1.75,0.85) {\scriptsize $|A\rangle$};
       \end{tikzpicture}\\[0.3em]
       \figcap{Excited $(E\times e)$ surfaces (red) and ground $|A\rangle$
       (blue) vs.\ mode coordinate $Q$.}
@@ -194,9 +193,9 @@ NISER, Bhubaneswar\\[0.6em]
 %=============================================================================
 \section{Single molecule: cavity Jahn--Teller polaritons (2023)}
 %=============================================================================
-\begin{frame}{Cavity Jahn--Teller Hamiltonian --- one molecule}
+\begin{frame}{Cavity Jahn--Teller Hamiltonian - One Molecule}
   \small
- There are circular modes $\hat a_\pm$ carrying photon angular momentum
+ There are circular cavity modes $\hat a_\pm$ carrying photon angular momentum
   $\pm\hbar$.\refmark{1} The cavity--JT Hamiltonian is
   $\hat H=\hat H_{\mathrm{JT}}+\hat H_{C}+\hat H_{CM}$, with
   \[
@@ -221,6 +220,8 @@ NISER, Bhubaneswar\\[0.6em]
       The JT (vibronic) coupling $\kappa$ exchanges angular momentum
       \emph{between the electronic and vibrational subsystems of the molecule};
       the cavity coupling $\hat H_{CM}$ then exchanges it with the photon.
+      Vibronic coupling $\kappa$ mixes electronic and nuclear motion
+      $\Rightarrow$ vibronic angular momentum is exchanged.
     \end{column}
     \begin{column}{0.48\textwidth}
       \begin{block}{Angular momenta \& conservation}
@@ -241,7 +242,7 @@ NISER, Bhubaneswar\\[0.6em]
   \end{columns}
 \end{frame}
 
-\begin{frame}{Single-molecule polaritonic spectrum (reproduced)}
+\begin{frame}{Single-Molecule Polaritonic Spectrum }
   \begin{columns}[T]
     \begin{column}{0.62\textwidth}
       \centering
@@ -301,7 +302,7 @@ NISER, Bhubaneswar\\[0.6em]
   $(n_{\mathrm{ex}}=1,\ j=-1)$.
 \end{frame}
 
-\begin{frame}{The Collective Vibronic cascade}
+\begin{frame}{The Collective Vibronic Cascade}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
       \small
@@ -361,17 +362,17 @@ NISER, Bhubaneswar\\[0.6em]
       \begin{itemize}
         \item $\mathrm{PR}$ counts how many $v$ sectors of an eigenstate participate meaningfully: $\mathrm{PR}=1$ if localized in one sector, larger
               if spread over many.
-        \item \textbf{$N=1$:} $\mathrm{PR}\le 3$ (bounded).\quad
+        \item \textbf{$N=1$:} $\mathrm{PR}\approx 3$ (bounded).\quad
               \textbf{$N=2$:} $\mathrm{PR}$ up to $\sim 20$.
         \item The \textbf{$P(v)$ heatmap} plots, for every bright polaritonic
               state (x, energy-ordered), its $P(v)$ over sectors $v$ (y),
-              colored by value --- the paper's Fig.~S1.\refmark{2}
+              colored by value \refmark{2}
       \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Two-Molecule Polaritonic Spectra (Reproduced)}
+\begin{frame}{Two-Molecule Polaritonic Spectra }
   \centering
   \includegraphics[width=0.96\linewidth]{fig_2mol_two_kappa.png}\\[0.3em]
   \small
@@ -382,7 +383,7 @@ NISER, Bhubaneswar\\[0.6em]
        Both at $\omega_c=6.85$~eV, $\Omega/2\omega_c=0.05$, $N=2$.\refmark{2}}
 \end{frame}
 
-\begin{frame}{Vibronic-Sector Heatmap $P(v)$ --- clean $N=2$ (reproduced)}
+\begin{frame}{Vibronic-Sector Heatmap $P(v)$ --- clean $N=2$}
   \begin{columns}[T]
     \begin{column}{0.62\textwidth}
       \centering
@@ -397,6 +398,7 @@ NISER, Bhubaneswar\\[0.6em]
         \item x-axis: bright states (energy-ordered); y-axis: sector $v$; color: $P(v)$.
         \item $N=2$ (\#vibrational states, $N_v=18$): a broad, well-converged
               cascade with $\mathrm{PR}_{\max}\approx20$.
+        \item \#bright eigenstates: $42$.
       \end{itemize}
     \end{column}
   \end{columns}
@@ -405,7 +407,7 @@ NISER, Bhubaneswar\\[0.6em]
 %=============================================================================
 \section{Introducing disorder}
 %=============================================================================
-\begin{frame}{Why disorder?}
+\begin{frame}{Why Disorder?}
   \begin{columns}[T]
     \begin{column}{0.58\textwidth}
       \small
@@ -447,23 +449,28 @@ NISER, Bhubaneswar\\[0.6em]
   \[
     \hat H=\hat H_{\mathrm{TC}}+\hat H_{\mathrm{vib}}+\hat H_{\mathrm{H}}+\hat H_{\mathrm{dis}},
     \qquad
-    \boxed{\ \hat H_{\mathrm{dis}}=\sum_n \epsilon_n\,\hat\sigma_n^+\hat\sigma_n^-\ }
+    \boxed{\ \hat H_{\mathrm{dis}}=\sum_n \epsilon_n\!\!\sum_{r=+,-}\hat\sigma_{n,r}^\dagger\hat\sigma_{n,r}\ }
   \]
-  with energy offsets $\epsilon_n$ of mean $0$ and variance $W^2$ (Gaussian), and
+  with energy offsets $\epsilon_n$ of mean $0$ and variance $W^2$ (Gaussian). For
+  each sublevel $r=+,-$,
   \[
-    \hat\sigma_n^+ = |E_+\rangle\langle E_+|_n, \qquad
-    \hat\sigma_n^- = |E_-\rangle\langle E_-|_n
+    \hat\sigma_{n,r}^\dagger = |E_r\rangle\langle A|_n\ (A\!\to\!E_r), \qquad
+    \hat\sigma_{n,r} = |A\rangle\langle E_r|_n\ (E_r\!\to\!A)
   \]
-  the \textbf{projection operators onto the $E_+$ / $E_-$ excited sublevels
-  of the $n$-th molecule} (same $E_\pm$ labels as before) --- so
-  $\hat H_{\mathrm{dis}}$ shifts each molecule's excited-sublevel energies by
-  its own random offset $\epsilon_n$. Consequences quantified in the paper:
+  are the \textbf{raising/lowering operators between $|A\rangle$ and $|E_r\rangle$
+  on the $n$-th molecule}, so $\hat\sigma_{n,r}^\dagger\hat\sigma_{n,r}=|E_r\rangle\langle E_r|_n$
+  is the projector onto sublevel $r$, giving
+  \[
+    \hat H_{\mathrm{dis}}=\sum_n \epsilon_n\big(|E_+\rangle\langle E_+|_n+|E_-\rangle\langle E_-|_n\big),
+  \]
+  which shifts each molecule's excited-sublevel energies by its own random
+  offset $\epsilon_n$. Consequences quantified in the paper:
   \begin{itemize}\small
     \item Dark states gain photon weight
-          $\sum_{\mathrm{dark}}|\langle d|1_{\mathrm{ph}}\rangle|^2\approx W^2/2g_c^2$
+          $\sum_{\mathrm{dark}}|\langle d|1_{\mathrm{ph}}\rangle|^2\approx W^2/g_c^2$
           $\Rightarrow$ they \textbf{appear in absorption}.
-    \item Polaritons stay protected while $g$ beats disorder: crossover at
-          $W\sim 2g$.
+    \item Polaritons stay protected while $g_c$ beats disorder: crossover at
+          $W\sim 2g_c$ (with $g_c=\Omega/2$).
   \end{itemize}
 \end{frame}
 
@@ -475,7 +482,7 @@ NISER, Bhubaneswar\\[0.6em]
   We add \textbf{Gaussian energy disorder} to the two JT molecules'
   transition energies:
   \[
-    \epsilon_i \sim \mathcal N(\epsilon,\ \sigma^2),\qquad i=1,2,\qquad \epsilon=7.0~\text{eV}.
+    \epsilon_i \sim \mathcal N(\epsilon,\ W^2),\qquad i=1,2,\qquad \epsilon=7.0~\text{eV}.
   \]
   Per disorder \emph{realization} we build $\hat H$ in the
   $(n_{\mathrm{ex}}=1,\ j=-1)$ sector, diagonalize, take the intensity of each
@@ -491,7 +498,7 @@ NISER, Bhubaneswar\\[0.6em]
     \bottomrule
   \end{tabular}
   \end{block}
-  Disorder strength quoted relative to $g$: we run at $\sigma\approx 2g$
+  Disorder strength quoted relative to $g$: we run at $W\approx 2g$
   (strong-disorder band), where the representative cases are physically distinct.
 \end{frame}
 
@@ -505,9 +512,10 @@ NISER, Bhubaneswar\\[0.6em]
       \small
       \begin{itemize}
         \item Each molecule's excitation energy is drawn from
-              $\mathcal N(\epsilon,\sigma^2)$ with $\sigma=0.48$~eV.
-  
-        \item Dashed lines / arrow mark $\pm\sigma$ ($-0.48$ to $+0.48$~eV).
+              $\mathcal N(\epsilon,W^2)$ with $W=0.48$~eV.
+        \item Dashed lines / arrow mark $\pm W$ ($-0.48$ to $+0.48$~eV).
+        \item $W/g\approx 2.0$, $W/\Omega\approx W/(2g_c)=0.70$ - just below
+              the $W=2g_c$ crossover .
         \item We average absorption over 100 such realizations.
       \end{itemize}
     \end{column}
@@ -523,8 +531,8 @@ NISER, Bhubaneswar\\[0.6em]
     \begin{column}{0.44\textwidth}
       \small
       Behind the disorder average lie many individual $(\epsilon_1,\epsilon_2)$
-      draws. We pick \textbf{9 physically meaningful realizations} (Cases
-      A--I), each best satisfying a criterion on the actual drawn energies:
+      draws. We pick \textbf{8 physically meaningful realizations} (Cases
+      A--H), each best satisfying a criterion on the actual drawn energies:
       \begin{itemize}\scriptsize
         \item average shift $s=(\delta_1+\delta_2)/2$ ;
         \item inter-molecular mismatch $\Delta=\epsilon_1-\epsilon_2$ .
@@ -545,25 +553,24 @@ NISER, Bhubaneswar\\[0.6em]
   Both molecules essentially on resonance,
   $\epsilon_1\!\approx\!\epsilon_2\!\approx\!\epsilon$.}{%
   $(\epsilon_1,\epsilon_2)=(6.98,7.01)$, $\Delta\!=\!0.02$, $s\!\approx\!0$;
-  \textbf{39 bright}, $\mathrm{PR}_{\max}=20.6$ at $E=7.361$~eV --- reproduces
+  \textbf{39 bright}, $\mathrm{PR}_{\max}=20.6$ at $E=7.361$~eV - almost reproduces
   the clean collective cascade.}
 
-\caseframe{D}{common blue detuning}{%
+\caseframe{D}{Common Blue Detuning}{%
   From A, shift \emph{both} molecules \emph{up} together by $\sim\!+g$ (
   $\Delta$ small): a common blue shift.}{%
   $(\epsilon_1,\epsilon_2)=(7.33,7.17)$, $\Delta\!=\!0.17$, $s\!=\!+1.0g$;
-  \textbf{12 bright}, $\mathrm{PR}_{\max}=12.5$ at $E=7.354$~eV :
+  \textbf{12 bright}, $\mathrm{PR}_{\max}=12.5$ at $E=7.354$~eV
   }
 
-\caseframe{E}{common red detuning }{%
+\caseframe{E}{Common Red Detuning }{%
   Flip the common shift to $-g$ (mirror of D, but red)}{%
   $(\epsilon_1,\epsilon_2)=(6.67,6.70)$, $\Delta\!=\!0.03$, $s\!=\!-1.3g$;
   \textbf{104 bright}, $\mathrm{PR}_{\max}=22.4$ at $E=7.215$~eV}
 
 \caseframe{F}{single-molecule resonant}{%
   Now introduce a real inter-molecular mismatch: bring one molecule back
-  \emph{onto} resonance while the other stays detuned by $\gtrsim\!g$ - a
-  mildly asymmetric \emph{collective} case (not localized).}{%
+  \emph{onto} resonance while the other stays detuned by $\gtrsim\!g$}{%
   $(\epsilon_1,\epsilon_2)=(7.01,6.75)$, $\Delta\!=\!g$, $s\!=\!-0.5g$;
   \textbf{132 bright}, $\mathrm{PR}_{\max}=21.6$ at $E=7.424$~eV.}
 
@@ -571,7 +578,7 @@ NISER, Bhubaneswar\\[0.6em]
   Detune the two molecules \emph{oppositely} (one red, one blue) about
   resonance, $s\!\approx\!0$ --- the interior of the line joining A and C.}{%
   $(\epsilon_1,\epsilon_2)=(6.72,7.33)$, $\Delta\!=\!2.5g$, $s\!\approx\!0$;
-  \textbf{46 bright}, $\mathrm{PR}_{\max}=16.2$ at $E=7.337$~eV --- \textbf{intermediate}:
+  \textbf{46 bright}, $\mathrm{PR}_{\max}=16.2$ at $E=7.337$~eV:
   brightens more peaks than A yet spreads each less.}
 
 \caseframe{C}{opposite disorder (far)}{%
@@ -580,7 +587,7 @@ NISER, Bhubaneswar\\[0.6em]
   $(\epsilon_1,\epsilon_2)=(6.28,7.76)$, $\Delta\!=\!6g$, $s\!\approx\!0$;
   \textbf{14 bright}, $\mathrm{PR}_{\max}=8.5$ at $E=7.728$~eV}
 
-\caseframe{B}{large same-side mismatch (localized)}{%
+\caseframe{B}{large same-side mismatch }{%
   Instead of opposite, detune one molecule far on the \emph{same} side
   ($\Delta\!=\!4g$): the excitation \emph{localizes} on the resonant molecule
   $\Rightarrow$ spectrum $\approx$ a single JT-polariton (orange: 1-mol
@@ -592,7 +599,7 @@ NISER, Bhubaneswar\\[0.6em]
   Finally push \emph{both} molecules far below resonance together
   : both decouple from the cavity.}{%
   $(\epsilon_1,\epsilon_2)=(6.25,6.15)$, $\Delta\!=\!0.10$, $s\!=\!-3.3g$;
-  \textbf{8 bright}, $\mathrm{PR}_{\max}=4.5$ at $E=6.118$~eV --- \textbf{dead}
+  \textbf{8 bright}, $\mathrm{PR}_{\max}=4.5$ at $E=6.118$~eV -
   (near-bare photon).}
 
 \begin{frame}{Number of Bright Vibronic States vs.\ Case}
@@ -664,5 +671,13 @@ NISER, Bhubaneswar\\[0.6em]
     \item \refEbbesen
   \end{enumerate}
 \end{frame}
+
+{\setbeamertemplate{footline}{}
+\begin{frame}
+  \vfill
+  \centering
+  {\Huge\itshape Thank You!}
+  \vfill
+\end{frame}}
 
 \end{document}
