@@ -1,0 +1,92 @@
+Speaker A: Okay, so this is first conditioning. It's something because I have also added this process on the right. Here, this is the— that I'm saying, this is a साम एक्स-एक्सेस इट इज़ इंडेक्सिंग ईच पोलैटरन यानी स्टेज हाँ राइट है कि नहीं हाँ यह द एनर्जी ऑफ़ दिस इज़ एनर्जी एक्सेस ओके सो सर वाज़ सेइंग समथिंग लाइक इफ़ वी सी व्हेन वी आर सीन अ लार्ज जेम इन दिस प्लॉट थेन इट इज़ शिफ्टिंग फ्रॉम लोअर पोलैटरन तू अपर पोलैटरन This right polar atomic state having the same sum energies, this axis will point in इस पे सो व्हाई यू टेकिंग वाई एक्सिस?
+
+Speaker B: वाई एक्सिस। डैट एनर्जी, एनर्जी बिल्डिंग। इन डेट एनर्जी में? हम्म। क्योंकि ब्राइट कोरेटोनिक स्टेट्स हैं। फॉर फर्स्ट आइगन वेक्टर, हम्म। हैविंग सम एनर्जी इज़ देयर। हाँ। फर्स्ट आइगन वेक्टर, सेकंड आइगन वेक्टर सम एनर्जी इज़ देयर। स Which code? Python code. ये जो जितना एनर्जी है ना, ये एक्सेस माना जाएगा। जैसे कि इसका एनर्जी कुछ होगा ना ब्राइट टाइगन स्टेट्स का कुछ एनर्जी होगा सिक्स पॉइंट समथिंग लाइक दैट। Can you explain?
+
+Speaker A: I am not getting it. It will pair with that. I do not have the exact points where this is happening. Yeah, but it's— I think it's the same point that you're saying, right? So from here, this is the upper priority. Until here it is low.
+
+Speaker B: Till here. But this whole sector belongs to lower priority, ना? To here. But why you take the point here? Right. So it is because the whole sector belongs to six point five energies.
+
+Speaker A: That is here.
+
+Speaker B: तो वो सारा कुछ है। तो डेट में होल सेक्टर ना?
+
+Speaker A: ओह, आई अंडरस्टॉड। बट हम्म। नॉट। ये योर पॉइंट रिप्रेजेंट ओनली दिस सेक्टर बिलोंग्स तू दिस एनर्जी। I don't. I think. Okay, I understood the problem. So we should not think like that. I mean, when I plotted this, I was thinking like I was taking this. I was not considering about this sectors. I was only Thinking about this, this what this eigenstate and the energy. So just to see the jump, I plotted this not for.
+
+Speaker B: But this whole one is one sector. Sorry, sector. This is one right eigenstate and this is.
+
+Speaker A: Ah, this is one sector.
+
+Speaker B: And you represent this one. So it looks like only this one. Comes in this energy range. And here there is contribution is 0, contribution is 0.
+
+Speaker A: Yes, but we cannot see this jumping trend if I put the energies on x-axis. I think we should see this only as to only for understanding that transition from LP to UP. Just that, nothing else.
+
+Speaker B: Okay, another thing. So this is case first.
+
+Speaker A: Except two will happen because seven even both are in seven six point nine eight and seven small all this is seven this delta is the difference between epsilon one and epsilon two and s is the average distance average average then Delta one plus delta two by two.
+
+Speaker B: Okay, average of delta.
+
+Speaker A: Yeah.
+
+Speaker B: But average of delta comes to three.
+
+Speaker A: Because this is shifted by point one. This is point zero point zero three. I think I was just minus 0.02. It's almost close to zero. It's almost zero. Let's see. Here it is low detailed, like both are shifted towards higher energies. So what are the explanations are missing in this study for this?
+
+Speaker B: So this You can say like, uh, how I explained yesterday. तो तो टू पॉइंट दो इज़ ऑल देस्ट। हम्म, समझा? हम्म। तो एंड दिस वन डिपेंड्स ऑन दिस पैनल जी इज़ जस्ट शिफ्टिंग पैनल, इट विल नॉट चेंज द स्पेक्ट्रम। हम्म। तीन जीएट प्रोडक्टेड है। एंड अप्सरनी सेवन पॉइंट ये। मींस द एनर्जी सिफ्टेड बाय जीरो पॉइंट इवन, सिक्स पॉइंट एट फाइव प्लस जीरो पॉइंट तीन। तो बाय दिस इज़ एनर्जी सिफ्टेड बाय इंटरनल। सो सेवन पॉइंट वन समथिंग लाइक डेट। सो नाउ योर मैक्सिमम इंटेंसिटी 7.1। हम्म, इफ यू सेट द कैविटी, क्वीन द कैविटी इस 7.1, हम्म, यू विल गेट एक्जेक्टली दिस सेम आउटसाइड। ओके, द एरलियर। हाँ, सिंपल एक्सप्लेनेशन इज़ द मॉलिक्युलर ट्रांजिशन इज़ 7.3, हम्म, एंड कैविटी इज़ रेजोल्यूशन क्वीन विद द 6.85। There is energy difference, so how much? 0.5 electron volt. So, when both are coupled, so mostly dominate in the lower polar atom, this type of thing.
+
+Speaker A: How is it? Mostly—
+
+Speaker B: what did you say? All the peaks comes in the 7.3 and you're doing the cavity 6.85. So, so all the peaks come in the upper polar constant. Okay. Upper polar constant. Yes. Because this one when we see 6.85, you have peak and where is this peak? Okay, then I'll do this one. सिक्स पॉइंट सेवन इलेक्ट्रॉन हाँ सिक्स नो नो नॉट सिक्स पॉइंट सेवन सिक्स सिक्स पॉइंट सेवन प्लस थ्री टू पॉइंट थ्री सेवन सपोज़ दिस इज़ सेवेन इलेक्ट्रॉन सो देरिच मूव फिक्स बट व्हेन वी सी द एनर्जी डिफरेंस दिस इज़ सेवेन पॉइंट थ्री दिस इज़ सिक्स पॉइंट All peaks are coming this region. Okay. So they are coupled with some minimum peaks lower polar atom. So they will hybridize and will form lower polar atom. And for upper polar atom, lots of peaks are there. Okay. That's why in upper polar atom, this type of features are seen.
+
+Speaker A: Okay. So same explanation for Add detail to this left side.
+
+Speaker B: No, see there, lower body. Could you hear me?
+
+Speaker A: 6.6 and 6.7.
+
+Speaker B: Ah, same explanation.
+
+Speaker A: Okay, so, uh, this also here. Okay, I don't have the— I should get the exact values for these.
+
+Speaker B: Exact value for these points means lower to upper, you're saying? 1, 2, 3, 4 pixels are there. In 4 pixels lower color, it This is for this one.
+
+Speaker A: Yeah.
+
+Speaker B: Oh, this dotted line?
+
+Speaker A: No, not dotted line. Dotted line is the— it's normalized actually. I was so confused, sir. Like what I did is I normalized every plot using the maximum peak of this reference one. So, then it looks like this. If I normalize with the highest peak of that plot itself, everything will like will be at 1, coming at 1 itself. That will not give a— the oscillator strength is redistributing. So here the here it is. Here till almost till five eigenstates, it is bright eigenstate.
+
+Speaker B: In lower polar only only five. Here only four.
+
+Speaker A: Here less than four.
+
+Speaker B: So 0, 1, 2, 3, 1, 2, 3, 4, 3.
+
+Speaker A: Ah, okay, including this. No, no, including this.
+
+Speaker B: This is 0, means that 1, 2, 3, 4.
+
+Speaker A: Ah, okay. Yeah, right, right, right. Ah, okay. This is the opposite of that. Here, okay. So why are the here the this number of polyatomic eigenstates are increasing? Why is it?
+
+Speaker B: That I have no idea. Earlier yesterday, sir told about this one. Then I asked him why in the world. Upper polar atom, less halogenous sectors have participated. In the upper polar atom, more number of halogenous sectors have participated. Like we have asked for this, then insert all, we can obtain this type of figure. And in the lower polar atom, but that one is not correct insertion.
+
+Speaker A: Okay, so there is this.
+
+Speaker B: No, I have no answer about this part. So, and also, and also I asked also, no, if I can't set same thing.
+
+Speaker A: Here the cascade is also कास्केड्स आलसो इंक्रीसिंग लाइक नंबर ऑफ़ आईब्रॉनिक सेक्टर्स विच आर पार्टिसिपेटिंग दोस्त आर आलसो इंक्रीसिंग हेलो हेलो Joint operators, I think नहीं है। In your code joint operators?
+
+Speaker B: No, नहीं है। हम्म। अच्छा मैं आ रहा हूँ। You can write byte states, not byte.
+
+Speaker A: 104 byte. Ah, I thought, uh, okay. So here it is, uh, this is, this is the same as— yeah, it's actually the same. Uh, the reason why I put this is because Here, this difference between this is almost g. So delta, epsilon one minus epsilon two.
+
+Speaker B: Delta is to omega c minus energy difference.
+
+Speaker A: What is this?
+
+Speaker B: This is a gravity frequency. हाँ आधार। This is electronic energy gain. हाँ हाँ। So this is delta.
+
+Speaker A: Delta is epsilon minus epsilon two.
+
+Speaker B: In your case delta is epsilon minus epsilon two। हाँ। Capital delta। लोग कौन पहुंच गया क्या कैंटीन में? अच्छा ठीक है मैं आ रहा हूँ एक दूसरे से। नहीं नहीं नहीं लोग पक्के आ रहे हैं। रणवीर कॉलिंग बोथ ऑफ़ बस इन कैंटीन। बोथ ऑफ़ बस। अच्छा। ओह ओके। वो कौन से डिस्कस कर रहे थे लाइक। ओके।
+

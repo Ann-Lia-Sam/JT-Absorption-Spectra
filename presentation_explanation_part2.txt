@@ -1,0 +1,306 @@
+Speaker A: So, here the difference between this epsilon one and epsilon two is zero point two four.
+
+Speaker B: Zero point two four.
+
+Speaker A: That's why I put this because.
+
+Speaker C: Type is to g, that is the difference between epsilon one and epsilon two. But here g is to g. What is the value of g?
+
+Speaker B: Zero point two four.
+
+Speaker C: ओके हाँ, हम यह सिंपल में क्या? फिर डन होगी बात हो जाए। ओके। हाँ, ओके। सो इट्स आल्सो रेसेम्बल्स दिस ब्लू डिटोनिकेस, शिफ्टिंग तू दिस साइड। ब्लू डिटोनिमस लोअर एनर्जी, हायर एनर्जी। हाईअर एनर्जीज रेट, रेट शिफ्टेज हाईएर एनर्जी। रेट शिफ्ट ऑफ़, हाँ, व्हाट इस रेट शिफ्ट? ओक Red shift and blue shift.
+
+Speaker B: Red shift?
+
+Speaker A: I heard rage shift. That's what I was thinking.
+
+Speaker C: Red shift is higher energy, no? Higher energy means why you are saying blue means red?
+
+Speaker A: Did I say blue? Okay, it's okay, it's red.
+
+Speaker C: Sure, it's red now.
+
+Speaker B: They have no pity.
+
+Speaker A: Blue no rage.
+
+Speaker B: Red is red.
+
+Speaker C: Red red shift. Less energy.
+
+Speaker A: Yes, redshift is less energy.
+
+Speaker B: This is—
+
+Speaker A: okay, actually this maybe this doesn't matter that much, but I'm thinking if this delta has some— okay, I'll show you one derivation.
+
+Speaker B: I wrote it so many times. Okay, हाँ.
+
+Speaker A: So if these are my right eigenstates, suppose I am writing the right state as a just a symmetric state and the left state as just an anti-symmetric state, it will look like this. Okay, and this. This I write the matrix of the solution of it. Since this is in this basis, this is 1, 0, the 0, and you write this like this. And now I add— yeah, I choose this This basis, this bright and dark basis, and then I this is my Hamiltonian as well. After just adding taking this vibroid eigenbasis and adding this other, it will look like this. Now if I am converting this to this bright and dark eigenbasis, it will somewhat look like this.
+
+Speaker B: Okay.
+
+Speaker A: So now there is this off diagonal terms.
+
+Speaker B: Okay.
+
+Speaker A: So off diagonal terms means this that. Means this bright and dark states are somewhat being different. Yes, because of this octahedral top. And if I add this this Hamiltonian on the bright state, this bright state, I am getting this.
+
+Speaker C: Hamiltonian plus some.
+
+Speaker A: This is the average average of the capsule and moon.
+
+Speaker B: Yes.
+
+Speaker C: Plus the capsule and moon.
+
+Speaker B: Yes.
+
+Speaker A: And so this term, this will have a difference of the 2 epsilon, not the 2 epsilon, the 2, the delta one that is being added to epsilon, the difference between that and the standard state. This is the coefficient of that. So this means this is, this has some coupling that is going on, right? That's what I'm saying, but I am not exactly able to explain this physically with this model. I'm not able to explain.
+
+Speaker C: When we run the calculation and we keep epsilon one and epsilon two equal to seven point one three. Yesterday we checked some spectra with different different epsilons.
+
+Speaker B: Yes.
+
+Speaker C: It will exactly same what you get in the spectrum. Exactly same I got. So I have to also read this paper. So actually today I was searching for that the professor told me this is the energy, but that one is not matching and all.
+
+Speaker A: His explanation, yeah.
+
+Speaker C: But professor told maybe this is the possible reason also.
+
+Speaker B: This is it. Okay.
+
+Speaker A: Yeah, it is single molecule being.
+
+Speaker C: How many bright states here in the lower polar atom side?
+
+Speaker A: I do not exactly know. And here from here also, this is very dense.
+
+Speaker C: So it is why it is dense because of let us say dense population is there. Why did happen? One is 7.01, silent one. Other is 6.75.
+
+Speaker B: Yes.
+
+Speaker C: Means two different molecules, two different ionic spectra and couple. So maybe this is the case.
+
+Speaker B: Okay.
+
+Speaker C: Two different ionic spectra. Means two different molecules. One in the six point seven five electron volt, other spectrum in the seven point zero one, and cavity is six point eight five. So you can think where is the table?
+
+Speaker A: The same way.
+
+Speaker C: Suppose this is the cavity, this is the molecule one, another molecule two. So cavity is close to the one of the molecule.
+
+Speaker B: 7.0.
+
+Speaker C: Another one is 6.75. That's why this one is coming here. You can plot ionic spectra. One you keep 7.01, other you can keep 6.75. In that way you can realize.
+
+Speaker A: Here also the difference between epsilon one and epsilon two is zero point two four.
+
+Speaker C: Zero point two four.
+
+Speaker B: Yes.
+
+Speaker C: Those two coupling coupling distance.
+
+Speaker B: Yes.
+
+Speaker A: Is it? I am not. I do not know if I am saying it right, but is it like Some kind of disorder is enhancing this.
+
+Speaker B: Enhancing?
+
+Speaker A: Not enhanced.
+
+Speaker C: Means participation ratio is increased, you are saying?
+
+Speaker B: Yes, yes.
+
+Speaker C: This is not actually. See. पार्टिसिपेशन रेशियो अराउंड 14 और 15 लाइक है ना यह सॉरी ओके यहाँ हमने 132 ब्राइट आइगन स्टेट्स इज़ दिस इज़ ब्राइट आइगन स्टेट्स इज़ नॉट द पार्टिसिपेशन रेशियो नॉट द पार्टिसिपेशन रेशियो सो but how many आइगन बैक्टर्स आर पार्टिसिपेटेड बायोनिक सेक्टर्स अराउंड 13 और 14 लाइक Yes, almost 15. Not 15, almost.
+
+Speaker A: Okay, 13 or 14 is—
+
+Speaker C: oh, I had minus 15 is also there. So maybe where is 15?
+
+Speaker B: This side.
+
+Speaker C: Do you have the video participation ratio of this one? I want to see the energy.
+
+Speaker A: Of which, which one?
+
+Speaker C: Close to this energy. Their participation ratio.
+
+Speaker A: I have to run it and get it. I will get it.
+
+Speaker B: This is 26.7.
+
+Speaker C: See this, see this code pick. They check मैचेस की तो वन मॉलिक्यूल पॉलरेटॉन टाइप, यस, बट इन द लोअर पॉलरेटॉन साइड, ठीक है?
+
+Speaker A: I try to overlay it, but it is not like that the Rabi splitting is different.
+
+Speaker B: No, no.
+
+Speaker C: One molecule peak looks like this type.
+
+Speaker A: Ah, this type, yes.
+
+Speaker C: And and this intensity may be this This one will overlap into this some of these peaks.
+
+Speaker B: Yes.
+
+Speaker C: That's why this intensity lower. In the one molecule case, this intensity is larger.
+
+Speaker B: This lower, lower.
+
+Speaker A: Ah, yes.
+
+Speaker C: Go MTK type. But here increasing and decreasing. Maybe this one only for this one, but this one. इंटेंसिटी ऑफ़ दिस वन इज़ आल्सो देर। इंटेंसिटी ऑफ़ विच वन? आह दिस एप्साइलन इज़ सेवेन पॉइंट जीरो वन। हम्म। डेट्स व्हाई दिस इंटेंसिटी इज़ मोर देन दिस वन। ओके। हम्म। ओके। तो क्या वी कैन't से वेरी लोअर पोलीटॉन एंड वेरी I just recognize this thing coming up, right?
+
+Speaker B: This piece.
+
+Speaker A: Then you— this is that line connecting.
+
+Speaker C: What I am expecting, same type lighting going on.
+
+Speaker A: 46 bright states are participating. It's, it's like the maximum participation is maximum, not average.
+
+Speaker C: Maximum was this one, I guess. Without this, this is the maximum.
+
+Speaker B: Which ones?
+
+Speaker C: This one or this one? Contribution is less, less, less, less, and square sum you will get, and reciprocal it, participant This peak, see, of this energy scale.
+
+Speaker B: Yeah, yes.
+
+Speaker C: And for this energy scale, this one is moving. For this one, maybe two different. We can say directly two different molecules and coupled together.
+
+Speaker B: Okay.
+
+Speaker C: Oh, you are not scaling.
+
+Speaker A: Oh, I forgot to scale it. Oh, I didn't.
+
+Speaker C: Can you go up? Their scaling is not not small.
+
+Speaker B: No, there's. There is no issue.
+
+Speaker C: And same, same, participation ratio is low, looks like one molecule case, and here is increasing.
+
+Speaker B: Thank you. This is also much.
+
+Speaker A: It is one is complete.
+
+Speaker C: This time two picks are coming in this kind, you remember? One is smaller this type like. So from there we can easily connect all the.
+
+Speaker A: स्टोरी तो दो डिफरेंट मॉलिक्यूल्स के अंदर कैरेटिंग हाँ तो जब हम ऐसे कहते हैं तो मैं सोच रही हूँ कि सेम रिपीटिंग यस और भी ये इसे भी नहीं बनाता है कि ये कुछ भी नहीं है कि ये किसी के लिए कुछ भी नहीं है Here both are completely off.
+
+Speaker C: Air is failing, so okay.
+
+Speaker A: Not two, three.
+
+Speaker C: What are you saying? Shh. There is no disorder. Here, see, it exactly matches because of when we take the average of this one. Close to seven electron volt both are not. That's why it is matching.
+
+Speaker B: Yes.
+
+Speaker C: This one is, it is far from seven electron volt. So this spectra is different. See, this is shift. But the story is same. The story is same. This is orange color for?
+
+Speaker B: This one.
+
+Speaker C: Yesterday I got three lines.
+
+Speaker B: Do you look?
+
+Speaker A: Three lines.
+
+Speaker C: Yeah. When I did seven point, I kept energy seven point zero eight. Omega C is six point eight five and G is that. 0.05 into omega c divided by root two. So three lines are coming. Why four lines are coming in the orange color?
+
+Speaker A: I, I don't know.
+
+Speaker C: You can check again because let me check again.
+
+Speaker A: I'll just divide it by three omega by root two.
+
+Speaker C: No, no, you have to change this one. Change 7.08 to what? Energy gap. Energy gap is 7.08 and that divided by 2.
+
+Speaker A: Okay, for the one molecule.
+
+Speaker C: This is totally for one molecule. Yes, because second molecule is there and somewhere is.
+
+Speaker A: Okay, so right now My epsilon is seven, and I divided it by root. So you are saying that I should change it to seven point seven eight?
+
+Speaker B: Yes. Okay. Okay. All the best to you.
+
+Speaker A: Don't say all the best. Don't don't say anything because that will make me think. But he he has workshop.
+
+Speaker C: Today no, he said last week.
+
+Speaker A: If if I asked him if the workshop ended or not, he first said no today. Then he said today. I don't know what that is. English answer there in mind.
+
+Speaker C: Even in mind. Perpetual, perpetual collaboration.
+
+Speaker A: Perpetual collaboration.
+
+Speaker C: That they start to, you know, put different ideas, provide their हाँ, ये जो मैंने तब पे इसको कॉलम में कॉलम कॉलम पे अभी नहीं है वो तो मिसना हाँ, लाइक फोर ओवर हाँ, यस फोर ओवर देन Maybe next time he will say, see my perfectual English.
+
+Speaker A: But it's true, ना? Adresar, विदा आदरेसर इंटरनेट। Yes, that is that's what I also think.
+
+Speaker B: Yes.
+
+Speaker C: विदा आदरेसर, for he everything is correct.
+
+Speaker A: How was it while doing the first paper? Like your first paper.
+
+Speaker C: वीडियो क्लियर सर? अगर ऐसा रोड पे फंसे, व्हेन पे फंस?
+
+Speaker A: ओह, व्हेन व्हेन अपने ऐसा रोड, होल नाइट व्हेन ही इज़ डूइंग, रिमूव इच एट, लाइक दैट ही इज़ डूइंग। इच इश्यू इच एट इन द लेकिन आपके तो कैल्शियम स्प्रेड। ओह, कैविटी मॉलिक्यूल। मॉलिक्यूल कैविटी। So in these cases where some takes are like coming on this side, this side, maybe I can स्केल 5.5 स्केल और आल्सो शो द प्लॉट्स फॉर दिस, जिसे 7.76 है। हम्म, सो फॉर दिस वन इट रिक्वायर्स मोर इनपुट। ओह, यू विल से फ्रॉम स्टार्टिंग ऑनवर्स ना, लाइक बेस। यस, आई थिंक आई विल से। थैंक यू। Really good. No, I'm scared, bro, because after her, these are— you had some— that's some typing mistake, but I think I have to—
+
+Speaker C: can you— this is our well-needed detail.
+
+Speaker B: This—
+
+Speaker A: it's— it's— I gave it to ChatGPT and it typed this thing. हाँ, so I think I will have to remove this. No arrowhead is it's a paper.
+
+Speaker C: Arrowhead is a paper thing?
+
+Speaker A: Yes, yes.
+
+Speaker C: Pwgs?
+
+Speaker A: I have no idea what that is. It just gave this thing. I think I have to it's yes it's there.
+
+Speaker C: Yesterday, Sonam wants to finish the hunger strike. So from today, he started.
+
+Speaker A: Yesterday, how was he? Healthy or? These two papers for what I referred to these two papers.
+
+Speaker C: What please don't abuse me. What can you do? Can you put a tolerance here ten to the power minus two because lots of small small peaks are there.
+
+Speaker A: Okay okay.
+
+Speaker C: For this one I am suggesting. For this one you can do.
+
+Speaker A: For both the tolerance, I should down.
+
+Speaker C: These are smaller.
+
+Speaker A: Oh, smaller.
+
+Speaker C: It's not ten to the power minus.
+
+Speaker B: Sorry. Cascade.
+
+Speaker A: See, I am working for it. So that we will highlight this cascade. Next, I will click next. Like cascade animation cascade comes.
+
+Speaker C: And molecule.
+
+Speaker A: Na co molecule.
+
+Speaker C: You can write cavity collective collective ionic cascading. Yesterday when I asked him question, no, no, no. In collective ionic cascading, there is no term.
+
+Speaker A: Sir was repeatedly telling me that. I should be seeing this vibronic cascade being subsided as disorder increases. He was saying I should get something like that.
+
+Speaker C: People actually been working with for different kappa kappa omega. So what I observe? तो सेम कैपा बाय ओमेगा रेशियो, but different कैपा वन बाय ओमेगा वन वैल्यूज़ कैपा वन बाय ओमेगा वन इक्वल्स तू कैपा टू बाय ओमेगा टू। so for up to one molecule spectra is no problem, but in case of two molecules spectra it will not match. okay totally not matching. so I found something I am not sure that one is correct, but I have checked in code for different different kappa and omega value. So I got the same spectrum.
+
+Speaker A: So it is not just kappa, not just the factor kappa by omega. They individually matter.
+
+Speaker C: For harmonic spectrum, kappa by omega is only the spectrum. For polar harmonic, lots of How many factors? Kappa by omega, epsilon by omega, omega c by omega, g by omega. These three four factors are mattering. So that thing I have concluded. But main question is lots of peaks in the upper polar atom. Till now I am not not getting any answer why in the upper part number of peaks are there. And in the participation, this only I found, if the peaks having low intensity, generally more number of iron sectors are accessible. If the peak is in intensity more, so there लेस नंबर ऑफ हाइब्रोनिक सेक्टर्स अप एक्सेसेबल हाई इंटेंसिटी पीक हायर इंटेंसिटी देन मोर नंबर ऑफ हाइब्रो हायर इंटेंसिटी लेस नंबर ऑफ ओके यहाँ हैव यू नोटिस्ड यस आई आई आई सोथा वेरी हाई but in this case you can notice it is higher You can check in this one. Okay, this one, this one, because one, one, this comes in the upper polariton side. Okay, you can check your higher number of electronic sectors are accessible. This one you can check. One more, this one also. Okay, okay, I guess, huh, for this 6, 7 electron 嗯，嗯，OK。Thank you very much.
+
+Speaker B: Goodbye.
+
